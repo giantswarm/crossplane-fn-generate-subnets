@@ -72,7 +72,10 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	}
 	var object ClusterObject
 	str, _ := json.Marshal(cluster.Resource.Object)
-	json.Unmarshal(str, &object)
+	if err := json.Unmarshal(str, &object); err != nil {
+		response.Fatal(rsp, errors.Wrapf(err, "Failed to unmarshal cluster object"))
+		return rsp, nil
+	}
 	f.log.Debug("Got", "Object", object)
 
 	var vpcs []VpcConfig = make([]VpcConfig, 0)
@@ -88,7 +91,9 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 			if subnet, ok := existing[name]; ok {
 				var sn SubnetObject
 				str, _ := json.Marshal(subnet.Resource.Object)
-				json.Unmarshal(str, &sn)
+				if err := json.Unmarshal(str, &sn); err != nil {
+					continue
+				}
 
 				if sn.Status.AtProvider != nil {
 					subnetDetails = append(subnetDetails, f.subnetToCapiStruct(*sn.Status.AtProvider))
@@ -142,8 +147,9 @@ func (f *Function) subnetToCapiStruct(subnet Subnet) map[string]interface{} {
 	}
 	str, _ := json.Marshal(subnet)
 	f.log.Debug(string(str))
-	json.Unmarshal(str, &value)
-	delete(value, "mapPublicIpOnLaunch")
+	if err := json.Unmarshal(str, &value); err == nil {
+		delete(value, "mapPublicIpOnLaunch")
+	}
 	return value
 }
 

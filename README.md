@@ -4,6 +4,10 @@ A [Crossplane] Composition Function which will generate an ObserveOnly subnet
 object for each subnet ID found in an EKS cluster resource, then patch specific
 information from those objects to a field on the composite resource.
 
+## How it works
+
+
+
 > **Note**
 > To run the kind cluster, you need to open the kind.sh script and
 > edit the TODO for the kube secret to point at the credentials you have for
