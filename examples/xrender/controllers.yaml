@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "upbound-provider-aws-ec2"
+  namespace: crossplane
+  annotations: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "upbound-provider-aws-eks"
+  namespace: crossplane
+  annotations: {}
+---
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: upbound-provider-aws-ec2
+  namespace: crossplane
+spec:
+  args:
+    - --debug
+    - --enable-management-policies
+  serviceAccountName: "upbound-provider-aws-ec2"
+---
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: upbound-provider-aws-eks
+  namespace: crossplane
+spec:
+  args:
+    - --debug
+    - --enable-management-policies
+  serviceAccountName: "upbound-provider-aws-eks"
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: upbound-provider-family-aws
+  namespace: crossplane
+spec:
+  ignoreCrossplaneConstraints: false
+  packagePullPolicy: IfNotPresent
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 0
+  skipDependencyResolution: false
+  package: xpkg.upbound.io/upbound/provider-family-aws:v0.40.0
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: upbound-provider-aws-ec2
+  namespace: crossplane
+spec:
+  controllerConfigRef:
+    name: upbound-provider-aws-ec2
+  ignoreCrossplaneConstraints: false
+  packagePullPolicy: IfNotPresent
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 0
+  skipDependencyResolution: false
+  package: xpkg.upbound.io/upbound/provider-aws-ec2:v0.40.0
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: upbound-provider-aws-eks
+  namespace: crossplane
+spec:
+  controllerConfigRef:
+    name: upbound-provider-aws-eks
+  ignoreCrossplaneConstraints: false
+  packagePullPolicy: IfNotPresent
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 0
+  skipDependencyResolution: false
+  package: xpkg.upbound.io/upbound/provider-aws-eks:v0.40.0

@@ -1,0 +1,16 @@
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: Function
+metadata:
+  name: function-generate-subnets
+  annotations:
+    xrender.crossplane.io/runtime: Development
+spec:
+  package: docker.io/choclab/function-generate-subnets:v0.0.1
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: Function
+metadata:
+  name: function-patch-and-transform
+spec:
+  package: docker.io/choclab/function-patch-and-transform:v0.1.2
