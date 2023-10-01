@@ -6,6 +6,34 @@ information from those objects to a field on the composite resource.
 
 ## How it works
 
+> **Warning**
+> This plugin is requires Crossplane v1.14 which is currently unreleased
+> (due 1st November 2023).
+>
+> The example composition is also written for Crossplane v1.14 and will
+> not work on any current MC version.
+> 
+> To support this, the script [`kind.sh`](./kind.sh) is provided to
+> help you understand how this works by spinning crossplane up inside a
+> kind cluster for local development.
+
+In order to use this function as part of the [Composition], the composition 
+must be written to use pipeline mode. This is a (currently undocumented)
+mode for compositions.
+
+```yaml
+spec:
+  compositeTypeRef:
+    apiVersion: crossplane.giantswarm.io/v1alpha1
+    kind: CompositeEksImport
+  mode: Pipeline
+  pipeline:
+  - step: collect-cluster
+    ...
+  - step: generate-subnets
+    ...
+```
+
 
 
 > **Note**
@@ -130,5 +158,6 @@ xrender examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xren
 It is just a prototype for now, not ready for production use.
 
 [Crossplane]: https://crossplane.io
+[Composition]: https://docs.crossplane.io/v1.13/concepts/compositions
 [RunFunctionRequest]: https://github.com/crossplane/function-sdk-go/blob/a4ada4f934f6f8d3f9018581199c6c71e0343d13/proto/v1beta1/run_function.proto#L36
 
