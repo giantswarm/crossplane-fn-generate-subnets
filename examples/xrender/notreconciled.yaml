@@ -1,0 +1,42 @@
+apiVersion: eks.aws.upbound.io/v1beta1
+kind: Cluster
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: eks-cluster
+    crossplane.io/external-name: example
+  creationTimestamp: "2023-09-30T10:20:05Z"
+  finalizers:
+  - finalizer.managedresource.crossplane.io
+  generateName: example-jhmp4-
+  generation: 2
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: example
+    app.kubernetes.io/part-of: example-eks-import
+    crossplane.io/claim-name: example
+    crossplane.io/claim-namespace: default
+    crossplane.io/composite: example-jhmp4
+    provider: aws
+  name: example
+  ownerReferences:
+  - apiVersion: crossplane.giantswarm.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: CompositeImport
+    name: example-jhmp4
+    uid: f3e4fa75-e761-4d54-b74e-ad18cd415761
+  resourceVersion: "1754"
+  uid: 3fb51335-0a91-4a57-a276-ea41219567f9
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+  initProvider: {}
+  managementPolicies:
+  - Observe
+  providerConfigRef:
+    name: aws-import
+  writeConnectionSecretToRef:
+    name: example-eks-cluster
+    namespace: default
