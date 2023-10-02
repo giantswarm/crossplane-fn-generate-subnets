@@ -170,6 +170,17 @@ xrender examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xren
 
 It is just a prototype for now, not ready for production use.
 
+- `upbound-provider-aws-ec2:v0.40.0` has a bug whereby the finalizer is not set on the subnets. This needs to be added as part of the generation
+- `upbound-provider-aws-eks:v0.41.0` has a bug whereby the provider will initially error with `Transient config error`.
+  This eventually goes away but takes ~10m for the full set to reconcile.
+
+It is currently best to use the following combination of providers:
+
+- `upbound-provider-aws-ec2:v0.41.0`
+- `upbound-provider-aws-eks:v0.40.0`
+
+Upstream issue tracking EKS provider bug: [https://github.com/upbound/provider-aws/issues/904](https://github.com/upbound/provider-aws/issues/904)
+
 [Crossplane]: https://crossplane.io
 [Composition]: https://docs.crossplane.io/v1.13/concepts/compositions
 [RunFunctionRequest]: https://github.com/crossplane/function-sdk-go/blob/a4ada4f934f6f8d3f9018581199c6c71e0343d13/proto/v1beta1/run_function.proto#L36

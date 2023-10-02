@@ -76,4 +76,4 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: false
-  package: xpkg.upbound.io/upbound/provider-aws-eks:v0.41.0
+  package: xpkg.upbound.io/upbound/provider-aws-eks:v0.40.0
