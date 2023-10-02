@@ -34,12 +34,19 @@ spec:
     ...
 ```
 
-
-
 > **Note**
 > To run the kind cluster, you need to open the kind.sh script and
 > edit the TODO for the kube secret to point at the credentials you have for
 > the cluster.
+>
+> Specifically the line to edit is:
+>
+> ```bash
+> kubectl create secret generic aws-credentials -n crossplane \
+>   --from-literal=creds="$(awk '/\[snail\]/{x=NR+2}(NR<=x){gsub("snail", "default"); print}' ~/.aws/credentials)"
+> ```
+>
+> Where I have a aws/credentials entry for `snail` that I convert to `default` for the provider.
 
 **Example:**
 
@@ -134,6 +141,10 @@ $ go generate ./...
 
 # Lint the code
 $ docker run --rm -v $(pwd):/app -v ~/.cache/golangci-lint/v1.54.2:/root/.cache -w /app golangci/golangci-lint:v1.54.2 golangci-lint run
+
+$ go test -cover ./...
+?       github.com/crossplane/function-template-go/input/v1beta1        [no test files]
+ok      github.com/crossplane/function-template-go      0.006s  coverage: 71.1% of statements
 
 # Build a Docker image - see Dockerfile
 $ docker build .

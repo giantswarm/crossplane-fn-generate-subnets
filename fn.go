@@ -188,9 +188,6 @@ func (f *Function) addDesiredTo(
 				"crossplane.io/external-name": subnet,
 			},
 			"labels": metadata.Labels,
-			"finalizers": []interface{}{
-				"finalizer.managedresource.crossplane.io",
-			},
 		},
 		"spec": map[string]interface{}{
 			"providerConfigRef": map[string]interface{}{

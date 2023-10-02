@@ -46,7 +46,7 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: false
-  package: xpkg.upbound.io/upbound/provider-family-aws:v0.40.0
+  package: xpkg.upbound.io/upbound/provider-family-aws:v0.41.0
 ---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
@@ -61,7 +61,7 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: false
-  package: xpkg.upbound.io/upbound/provider-aws-ec2:v0.40.0
+  package: xpkg.upbound.io/upbound/provider-aws-ec2:v0.41.0
 ---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
@@ -76,4 +76,4 @@ spec:
   revisionActivationPolicy: Automatic
   revisionHistoryLimit: 0
   skipDependencyResolution: false
-  package: xpkg.upbound.io/upbound/provider-aws-eks:v0.40.0
+  package: xpkg.upbound.io/upbound/provider-aws-eks:v0.41.0
