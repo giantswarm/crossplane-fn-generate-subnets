@@ -152,6 +152,8 @@ $ docker build .
 
 ## Testing locally
 
+To test this application locally you need to first install [xrender].
+
 In one window, execute:
 
 ```bash
@@ -171,4 +173,4 @@ It is just a prototype for now, not ready for production use.
 [Crossplane]: https://crossplane.io
 [Composition]: https://docs.crossplane.io/v1.13/concepts/compositions
 [RunFunctionRequest]: https://github.com/crossplane/function-sdk-go/blob/a4ada4f934f6f8d3f9018581199c6c71e0343d13/proto/v1beta1/run_function.proto#L36
-
+[xrender]: https://github.com/crossplane-contrib/xrender
