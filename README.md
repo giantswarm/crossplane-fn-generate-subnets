@@ -37,7 +37,7 @@ spec:
 > **Note**
 > To run the kind cluster, you need to open the kind.sh script and
 > edit the TODO for the kube secret to point at the credentials you have for
-> the cluster.
+> the cluster account.
 >
 > Specifically the line to edit is:
 >

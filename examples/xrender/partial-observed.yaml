@@ -1,0 +1,519 @@
+---
+apiVersion: eks.aws.upbound.io/v1beta1
+kind: Cluster
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: eks-cluster
+    crossplane.io/external-name: sample-customer
+  creationTimestamp: "2023-09-30T10:20:05Z"
+  finalizers:
+    - finalizer.managedresource.crossplane.io
+  generateName: sample-customer-jhmp4-
+  generation: 2
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: sample-customer
+    app.kubernetes.io/part-of: sample-customer-eks-import
+    crossplane.io/claim-name: sample-customer
+    crossplane.io/claim-namespace: org-sample
+    crossplane.io/composite: sample-customer-jhmp4
+    provider: aws
+  name: sample-customer
+  ownerReferences:
+    - apiVersion: crossplane.giantswarm.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: CompositeEksImport
+      name: sample-customer-jhmp4
+      uid: f3e4fa75-e761-4d54-b74e-ad18cd415761
+  resourceVersion: "1754"
+  uid: 3fb51335-0a91-4a57-a276-ea41219567f9
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+  initProvider: {}
+  managementPolicies:
+    - Observe
+  providerConfigRef:
+    name: snail
+  writeConnectionSecretToRef:
+    name: sample-customer-eks-cluster
+    namespace: org-sample
+status:
+  atProvider:
+    arn: arn:aws:eks:eu-central-1:242036376510:cluster/sample-customer
+    certificateAuthority:
+      - data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJek1EWXhOVEV6TURFeU0xb1hEVE16TURZeE1qRXpNREV5TTFvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTnhvCnB4MkE5alltenl6TVlDZVhkUWdEZEMyYUE4b3QwTlZOVGFINHlDd0RLWGZBZUNlQUJFWTZWd2NoRnpyVWh2YTMKcUNnUlhNM2hxZ1lPOEFkS2o5SDc5c1pYVzZzQ1IyaDZwcHRBSTQrR3FlVU1tMFltZ0RyK255dEk5VUZGa1o5bAoyYzNjM1Y0UURpby96SkFUaWFHbkhuQWRPVGY3QTRqR05Xa3ZSVVEwSCsxRHFMS3lEQ0JrT1kwRzhmeFAzYmd5CmdZQmlMUWtHeHVBZkdWdnZLVkU1bysvc1FtQ3dzNVJJcXFrZnYyS0MwQUl0Z1VvUE1YSlZQbEFXVERVQm5VdXYKNzFjeFRyNXVtMVc3QU9INTYrN3RHMjJFZGQ2VUQ5NVoxOVlibXlaeU1UdXI4VVBiOXZJb3ZaMmtGaWJ1VVlObQptbDBoQzJlbFo3OXRlT0pOcUlVQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZLYUZacytQanBuais1cENiR2tPSnZZcUEwcklNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBTWVPQk0rY0l0WHMrZE8vck1oZgplTmFpQjdDakwveHRvbTYycmRLWGc0LzVjSGppUTQ0M1ZWOFoySmt0cncyMHZyK2xtejhYWHd0UkZvOHRtN1lFCkhhd0poK2V6WjFtd0dIajRMNzQ3bDcvdWgrL2pKeHlCQlUxblVtaEFQellNakFSNndTeUMra29BYWdnbVRvb0oKTzhRZ1FqV29YWGtrTzM3NWZoSWRxSVgrOFQ1SWU5RzU0MWlQRkd5VVcxVHZzc1k0UTMxQVhMaFNuZi93ODNmNgpZK1BSV3dZM0s3TERWSGYvaUpMTFJlWElnOWtHU3NsbUIxR3IzajFWNFE5NXRpNk1rYjZSeUU0WUx6bnMySjN0CkFoNnFzZ0N4L3B3NjNhMFRKRVIzb1FudUlzOXZlMUtTRFcyaGgvR2RXMEYrZWMyUW55R24wdmZKVTg2TFF2RkIKRFI4PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    createdAt: 2023-06-15 12:56:46.457 +0000 UTC
+    endpoint: https://853603E4742102878D91393027E2F71E.gr7.eu-central-1.eks.amazonaws.com
+    id: sample-customer
+    identity:
+      - oidc:
+          - issuer: https://oidc.eks.eu-central-1.amazonaws.com/id/853603E4742102878D91393027E2F71E
+    kubernetesNetworkConfig:
+      - ipFamily: ipv4
+        serviceIpv4Cidr: 10.100.0.0/16
+        serviceIpv6Cidr: ""
+    platformVersion: eks.7
+    roleArn: arn:aws:iam::242036376510:role/eksctl-sample-customer-cluster-ServiceRole-1CL24AWNQL2HF
+    status: ACTIVE
+    tags:
+      Name: sample-customer
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: "true"
+      sigs.k8s.io/cluster-api-provider-aws/cluster/sample-customer: owned
+      sigs.k8s.io/cluster-api-provider-aws/role: common
+    tagsAll:
+      Name: sample-customer
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: "true"
+      sigs.k8s.io/cluster-api-provider-aws/cluster/sample-customer: owned
+      sigs.k8s.io/cluster-api-provider-aws/role: common
+    version: "1.25"
+    vpcConfig:
+      - clusterSecurityGroupId: sg-03b94ec341d48b649
+        endpointPrivateAccess: false
+        endpointPublicAccess: true
+        publicAccessCidrs:
+          - 0.0.0.0/0
+        securityGroupIds:
+          - sg-0b032b59aec935eef
+        subnetIds:
+          - subnet-007d35c16daa4782c
+          - subnet-0158eb505b554bf21
+          - subnet-019423722e38af9c7
+          - subnet-084a0e5df94ba241f
+          - subnet-0e8eea2293fd9c41b
+          - subnet-0f9c3954a4eba2d0a
+        vpcId: vpc-07be03fc52dc59b7c
+  conditions:
+    - lastTransitionTime: "2023-09-30T10:20:06Z"
+      reason: ReconcileSuccess
+      status: "True"
+      type: Synced
+    - lastTransitionTime: "2023-09-30T10:20:09Z"
+      reason: Available
+      status: "True"
+      type: Ready
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: function-subnets-subnet-007d35c16daa4782c
+    crossplane.io/external-name: subnet-007d35c16daa4782c
+  creationTimestamp: "2023-10-01T06:26:58Z"
+  finalizers:
+    - finalizer.managedresource.crossplane.io
+  generateName: sample-customer-gxvg7-
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: sample-customer
+    app.kubernetes.io/part-of: sample-customer-eks-import
+    crossplane.io/claim-name: sample-customer
+    crossplane.io/claim-namespace: org-sample
+    crossplane.io/composite: sample-customer-gxvg7
+    provider: aws
+  name: subnet-007d35c16daa4782c
+  ownerReferences:
+    - apiVersion: crossplane.giantswarm.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: CompositeEksImport
+      name: sample-customer-gxvg7
+      uid: 4e77ed1f-2117-4bb6-a660-f6dacb07d17c
+  resourceVersion: "1806"
+  uid: 0144c32d-7047-44c9-805b-d78ff42f54d9
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+    vpcId: vpc-07be03fc52dc59b7c
+  managementPolicies:
+    - Observe
+  providerConfigRef:
+    name: snail
+  writeConnectionSecretToRef:
+    name: subnet-007d35c16daa4782c
+    namespace: org-sample
+status:
+  atProvider: {}
+  conditions:
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: Available
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: ReconcileSuccess
+      status: "True"
+      type: Synced
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: function-subnets-subnet-0158eb505b554bf21
+    crossplane.io/external-name: subnet-0158eb505b554bf21
+  creationTimestamp: "2023-10-01T06:26:58Z"
+  finalizers:
+    - finalizer.managedresource.crossplane.io
+  generateName: sample-customer-gxvg7-
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: sample-customer
+    app.kubernetes.io/part-of: sample-customer-eks-import
+    crossplane.io/claim-name: sample-customer
+    crossplane.io/claim-namespace: org-sample
+    crossplane.io/composite: sample-customer-gxvg7
+    provider: aws
+  name: subnet-0158eb505b554bf21
+  ownerReferences:
+    - apiVersion: crossplane.giantswarm.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: CompositeEksImport
+      name: sample-customer-gxvg7
+      uid: 4e77ed1f-2117-4bb6-a660-f6dacb07d17c
+  resourceVersion: "1815"
+  uid: 48f0b909-0978-439d-9a32-d880c8d1f142
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+    vpcId: vpc-07be03fc52dc59b7c
+  managementPolicies:
+    - Observe
+  providerConfigRef:
+    name: snail
+  writeConnectionSecretToRef:
+    name: subnet-0158eb505b554bf21
+    namespace: org-sample
+status:
+  atProvider: {}
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: function-subnets-subnet-019423722e38af9c7
+    crossplane.io/external-name: subnet-019423722e38af9c7
+  creationTimestamp: "2023-10-01T06:26:58Z"
+  finalizers:
+    - finalizer.managedresource.crossplane.io
+  generateName: sample-customer-gxvg7-
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: sample-customer
+    app.kubernetes.io/part-of: sample-customer-eks-import
+    crossplane.io/claim-name: sample-customer
+    crossplane.io/claim-namespace: org-sample
+    crossplane.io/composite: sample-customer-gxvg7
+    provider: aws
+  name: subnet-019423722e38af9c7
+  ownerReferences:
+    - apiVersion: crossplane.giantswarm.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: CompositeEksImport
+      name: sample-customer-gxvg7
+      uid: 4e77ed1f-2117-4bb6-a660-f6dacb07d17c
+  resourceVersion: "1810"
+  uid: cde749eb-3bf3-44ce-83d7-1dc3bf2e3d24
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+    vpcId: vpc-07be03fc52dc59b7c
+  managementPolicies:
+    - Observe
+  providerConfigRef:
+    name: snail
+  writeConnectionSecretToRef:
+    name: subnet-019423722e38af9c7
+    namespace: org-sample
+status:
+  atProvider: {}
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: function-subnets-subnet-084a0e5df94ba241f
+    crossplane.io/external-name: subnet-084a0e5df94ba241f
+  creationTimestamp: "2023-10-01T06:26:58Z"
+  finalizers:
+    - finalizer.managedresource.crossplane.io
+  generateName: sample-customer-gxvg7-
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: sample-customer
+    app.kubernetes.io/part-of: sample-customer-eks-import
+    crossplane.io/claim-name: sample-customer
+    crossplane.io/claim-namespace: org-sample
+    crossplane.io/composite: sample-customer-gxvg7
+    provider: aws
+  name: subnet-084a0e5df94ba241f
+  ownerReferences:
+    - apiVersion: crossplane.giantswarm.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: CompositeEksImport
+      name: sample-customer-gxvg7
+      uid: 4e77ed1f-2117-4bb6-a660-f6dacb07d17c
+  resourceVersion: "1816"
+  uid: 302d9c5a-5d88-419e-95c1-ae40ecd246cd
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+    vpcId: vpc-07be03fc52dc59b7c
+  managementPolicies:
+    - Observe
+  providerConfigRef:
+    name: snail
+  writeConnectionSecretToRef:
+    name: subnet-084a0e5df94ba241f
+    namespace: org-sample
+status:
+  atProvider:
+    arn: arn:aws:ec2:eu-central-1:242036376510:subnet/subnet-084a0e5df94ba241f
+    assignIpv6AddressOnCreation: false
+    availabilityZone: eu-central-1a
+    availabilityZoneId: euc1-az2
+    cidrBlock: 192.168.96.0/19
+    customerOwnedIpv4Pool: ""
+    enableDns64: false
+    enableLniAtDeviceIndex: 0
+    enableResourceNameDnsARecordOnLaunch: false
+    enableResourceNameDnsAaaaRecordOnLaunch: false
+    id: subnet-084a0e5df94ba241f
+    ipv6CidrBlock: ""
+    ipv6CidrBlockAssociationId: ""
+    ipv6Native: false
+    mapCustomerOwnedIpOnLaunch: false
+    mapPublicIpOnLaunch: false
+    outpostArn: ""
+    ownerId: "242036376510"
+    privateDnsHostnameTypeOnLaunch: ip-name
+    tags:
+      Name: eksctl-sample-customer-cluster/SubnetPrivateEUCENTRAL1A
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: shared
+      kubernetes.io/role/internal-elb: "1"
+    tagsAll:
+      Name: eksctl-sample-customer-cluster/SubnetPrivateEUCENTRAL1A
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: shared
+      kubernetes.io/role/internal-elb: "1"
+    vpcId: vpc-07be03fc52dc59b7c
+  conditions:
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: Available
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: ReconcileSuccess
+      status: "True"
+      type: Synced
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: function-subnets-subnet-0e8eea2293fd9c41b
+    crossplane.io/external-name: subnet-0e8eea2293fd9c41b
+  creationTimestamp: "2023-10-01T06:26:58Z"
+  finalizers:
+    - finalizer.managedresource.crossplane.io
+  generateName: sample-customer-gxvg7-
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: sample-customer
+    app.kubernetes.io/part-of: sample-customer-eks-import
+    crossplane.io/claim-name: sample-customer
+    crossplane.io/claim-namespace: org-sample
+    crossplane.io/composite: sample-customer-gxvg7
+    provider: aws
+  name: subnet-0e8eea2293fd9c41b
+  ownerReferences:
+    - apiVersion: crossplane.giantswarm.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: CompositeEksImport
+      name: sample-customer-gxvg7
+      uid: 4e77ed1f-2117-4bb6-a660-f6dacb07d17c
+  resourceVersion: "1809"
+  uid: 68d4f639-1390-47cc-9c82-a634af4b27d9
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+    vpcId: vpc-07be03fc52dc59b7c
+  managementPolicies:
+    - Observe
+  providerConfigRef:
+    name: snail
+  writeConnectionSecretToRef:
+    name: subnet-0e8eea2293fd9c41b
+    namespace: org-sample
+status:
+  atProvider:
+    arn: arn:aws:ec2:eu-central-1:242036376510:subnet/subnet-0e8eea2293fd9c41b
+    assignIpv6AddressOnCreation: false
+    availabilityZone: eu-central-1c
+    availabilityZoneId: euc1-az1
+    cidrBlock: 192.168.32.0/19
+    customerOwnedIpv4Pool: ""
+    enableDns64: false
+    enableLniAtDeviceIndex: 0
+    enableResourceNameDnsARecordOnLaunch: false
+    enableResourceNameDnsAaaaRecordOnLaunch: false
+    id: subnet-0e8eea2293fd9c41b
+    ipv6CidrBlock: ""
+    ipv6CidrBlockAssociationId: ""
+    ipv6Native: false
+    mapCustomerOwnedIpOnLaunch: false
+    mapPublicIpOnLaunch: true
+    outpostArn: ""
+    ownerId: "242036376510"
+    privateDnsHostnameTypeOnLaunch: ip-name
+    tags:
+      Name: eksctl-sample-customer-cluster/SubnetPublicEUCENTRAL1C
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: shared
+      kubernetes.io/role/elb: "1"
+    tagsAll:
+      Name: eksctl-sample-customer-cluster/SubnetPublicEUCENTRAL1C
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: shared
+      kubernetes.io/role/elb: "1"
+    vpcId: vpc-07be03fc52dc59b7c
+  conditions:
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: Available
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: ReconcileSuccess
+      status: "True"
+      type: Synced
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: function-subnets-subnet-0f9c3954a4eba2d0a
+    crossplane.io/external-name: subnet-0f9c3954a4eba2d0a
+  creationTimestamp: "2023-10-01T06:26:58Z"
+  finalizers:
+    - finalizer.managedresource.crossplane.io
+  generateName: sample-customer-gxvg7-
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: eks-import
+    app.kubernetes.io/managed-by: crossplane
+    app.kubernetes.io/name: sample-customer
+    app.kubernetes.io/part-of: sample-customer-eks-import
+    crossplane.io/claim-name: sample-customer
+    crossplane.io/claim-namespace: org-sample
+    crossplane.io/composite: sample-customer-gxvg7
+    provider: aws
+  name: subnet-0f9c3954a4eba2d0a
+  ownerReferences:
+    - apiVersion: crossplane.giantswarm.io/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: CompositeEksImport
+      name: sample-customer-gxvg7
+      uid: 4e77ed1f-2117-4bb6-a660-f6dacb07d17c
+  resourceVersion: "1812"
+  uid: 9d1044dd-fdaa-43a6-8e2a-8290c5b7dfae
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: eu-central-1
+    vpcId: vpc-07be03fc52dc59b7c
+  managementPolicies:
+    - Observe
+  providerConfigRef:
+    name: snail
+  writeConnectionSecretToRef:
+    name: subnet-0f9c3954a4eba2d0a
+    namespace: org-sample
+status:
+  atProvider:
+    arn: arn:aws:ec2:eu-central-1:242036376510:subnet/subnet-0f9c3954a4eba2d0a
+    assignIpv6AddressOnCreation: false
+    availabilityZone: eu-central-1a
+    availabilityZoneId: euc1-az2
+    cidrBlock: 192.168.0.0/19
+    customerOwnedIpv4Pool: ""
+    enableDns64: false
+    enableLniAtDeviceIndex: 0
+    enableResourceNameDnsARecordOnLaunch: false
+    enableResourceNameDnsAaaaRecordOnLaunch: false
+    id: subnet-0f9c3954a4eba2d0a
+    ipv6CidrBlock: ""
+    ipv6CidrBlockAssociationId: ""
+    ipv6Native: false
+    mapCustomerOwnedIpOnLaunch: false
+    mapPublicIpOnLaunch: true
+    outpostArn: ""
+    ownerId: "242036376510"
+    privateDnsHostnameTypeOnLaunch: ip-name
+    tags:
+      Name: eksctl-sample-customer-cluster/SubnetPublicEUCENTRAL1A
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: shared
+      kubernetes.io/role/elb: "1"
+    tagsAll:
+      Name: eksctl-sample-customer-cluster/SubnetPublicEUCENTRAL1A
+      alpha.eksctl.io/cluster-name: sample-customer
+      alpha.eksctl.io/cluster-oidc-enabled: "false"
+      alpha.eksctl.io/eksctl-version: 0.144.0-dev+92e3cd383.2023-06-09T12:43:37Z
+      eksctl.cluster.k8s.io/v1alpha1/cluster-name: sample-customer
+      kubernetes.io/cluster/sample-customer: shared
+      kubernetes.io/role/elb: "1"
+    vpcId: vpc-07be03fc52dc59b7c
+  conditions:
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: Available
+      status: "True"
+      type: Ready
+    - lastTransitionTime: "2023-10-01T06:26:59Z"
+      reason: ReconcileSuccess
+      status: "True"
+      type: Synced

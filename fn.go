@@ -95,8 +95,8 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 					continue
 				}
 
-				if sn.Status.AtProvider != nil {
-					subnetDetails = append(subnetDetails, f.subnetToCapiStruct(*sn.Status.AtProvider))
+				if (sn.Status).AtProvider != nil {
+					subnetDetails = append(subnetDetails, f.subnetToCapiStruct(sn.Status.AtProvider))
 				}
 			}
 
@@ -133,7 +133,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	return rsp, nil
 }
 
-func (f *Function) subnetToCapiStruct(subnet Subnet) map[string]interface{} {
+func (f *Function) subnetToCapiStruct(subnet *Subnet) map[string]interface{} {
 	var (
 		value map[string]interface{}
 	)
@@ -142,9 +142,10 @@ func (f *Function) subnetToCapiStruct(subnet Subnet) map[string]interface{} {
 	// without performing a lookup on the route table however without the route table ID
 	// we've no way at the moment of filtering for this subnet
 	// so this is quick and dirty
-	if _, ok := subnet.Tags["giantswarm.io/public"]; ok || *subnet.MapPublicIPOnLaunch {
+	if _, ok := (*subnet).Tags["giantswarm.io/public"]; ok || (subnet.MapPublicIPOnLaunch != nil && *(subnet.MapPublicIPOnLaunch)) {
 		subnet.IsPublic = true
 	}
+
 	str, _ := json.Marshal(subnet)
 	f.log.Debug(string(str))
 	if err := json.Unmarshal(str, &value); err == nil {

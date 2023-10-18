@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+
 	"github.com/crossplane/crossplane-runtime/pkg/logging"
 	fnv1beta1 "github.com/crossplane/function-sdk-go/proto/v1beta1"
 )
@@ -78,13 +80,38 @@ type SubnetStatus struct {
 	AtProvider *Subnet `json:"atProvider,omitempty"`
 }
 
+func (s *SubnetStatus) UnmarshalJSON(data []byte) (err error) {
+	var (
+		inf map[string]interface{}
+		sn  Subnet
+	)
+	s.AtProvider = nil
+
+	if err = json.Unmarshal(data, &inf); err != nil {
+		return
+	}
+
+	if _, ok := inf["atProvider"]; !ok {
+		return
+	}
+
+	str, _ := json.Marshal(inf["atProvider"])
+	if err = json.Unmarshal(str, &sn); err != nil {
+		return
+	}
+	if sn.ID != "" {
+		s.AtProvider = &sn
+	}
+	return
+}
+
 type Subnet struct {
-	ID                  string                 `json:"id"`
-	AvailabilityZone    string                 `json:"availabilityZone"`
-	CidrBlock           string                 `json:"cidrBlock"`
-	IsIpv6              bool                   `json:"isIpV6"`
-	Ipv6CidrBlock       string                 `json:"ipv6CidrBlock"`
-	Tags                map[string]interface{} `json:"tags,omitempty"`
-	IsPublic            bool                   `json:"isPublic"`
-	MapPublicIPOnLaunch *bool                  `json:"mapPublicIpOnLaunch,omitempty"`
+	ID                  string            `json:"id"`
+	AvailabilityZone    string            `json:"availabilityZone"`
+	CidrBlock           string            `json:"cidrBlock"`
+	IsIpv6              bool              `json:"isIpV6"`
+	Ipv6CidrBlock       string            `json:"ipv6CidrBlock"`
+	Tags                map[string]string `json:"tags"`
+	IsPublic            bool              `json:"isPublic"`
+	MapPublicIPOnLaunch *bool             `json:"mapPublicIpOnLaunch,omitempty"`
 }
