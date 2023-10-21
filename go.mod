@@ -7,7 +7,7 @@ require (
 	github.com/clarketm/json v1.17.1
 	github.com/crossplane/crossplane-runtime v1.13.0
 	github.com/crossplane/function-sdk-go v0.0.0-20230920225543-a4ada4f934f6
-	github.com/google/go-cmp v0.5.9
+	github.com/google/go-cmp v0.6.0
 	google.golang.org/protobuf v1.31.0
 	k8s.io/apimachinery v0.28.2
 	sigs.k8s.io/controller-tools v0.12.1
