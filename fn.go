@@ -7,12 +7,12 @@ import (
 
 	"github.com/crossplane/crossplane-runtime/pkg/errors"
 	"github.com/crossplane/crossplane-runtime/pkg/fieldpath"
-	"github.com/crossplane/crossplane-runtime/pkg/resource/unstructured/composed"
 	fnv1beta1 "github.com/crossplane/function-sdk-go/proto/v1beta1"
 	"github.com/crossplane/function-sdk-go/request"
 	"github.com/crossplane/function-sdk-go/resource"
+	"github.com/crossplane/function-sdk-go/resource/composed"
 	"github.com/crossplane/function-sdk-go/response"
-	"github.com/crossplane/function-template-go/input/v1beta1"
+	"github.com/giantswarm/crossplane-fn-generate-subnets/input/v1beta1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 )

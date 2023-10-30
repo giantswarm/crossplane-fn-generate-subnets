@@ -23,7 +23,7 @@ metadata:
   - apiVersion: crossplane.giantswarm.io/v1alpha1
     blockOwnerDeletion: true
     controller: true
-    kind: CompositeEksImport
+    kind: CompositeImport
     name: example-jhmp4
     uid: f3e4fa75-e761-4d54-b74e-ad18cd415761
   resourceVersion: "1754"
@@ -40,14 +40,3 @@ spec:
   writeConnectionSecretToRef:
     name: example-eks-cluster
     namespace: default
-status:
-  atProvider: {}
-  conditions:
-  - lastTransitionTime: "2023-09-30T10:20:06Z"
-    reason: ReconcileSuccess
-    status: "True"
-    type: Synced
-  - lastTransitionTime: "2023-09-30T10:20:09Z"
-    reason: Available
-    status: "True"
-    type: Ready
