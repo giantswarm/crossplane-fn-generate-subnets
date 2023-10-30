@@ -8,6 +8,7 @@
 *.so
 *.dylib
 
+function-generate-subnets
 # Test binary, built with `go test -c`
 *.test
 

@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.1
-  name: inputs.generator.fn.giantswarm.io
+  name: inputs.generatesubnets.fn.giantswarm.io
 spec:
-  group: generator.fn.giantswarm.io
+  group: generatesubnets.fn.giantswarm.io
   names:
     categories:
     - crossplane

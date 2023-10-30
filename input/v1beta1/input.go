@@ -1,6 +1,6 @@
 // Package v1beta1 contains the input type for this Function
 // +kubebuilder:object:generate=true
-// +groupName=generator.fn.giantswarm.io
+// +groupName=generatesubnets.fn.giantswarm.io
 // +versionName=v1beta1
 package v1beta1
 
