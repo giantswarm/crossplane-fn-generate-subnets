@@ -19,10 +19,12 @@ type Function struct {
 
 // XRSpec is the definition of the XR as an object
 type XRSpec struct {
-	Labels            map[string]string `json:"labels"`
-	ProviderConfigRef string            `json:"providerConfigRef"`
-	DeletionPolicy    string            `json:"deletionPolicy"`
-	ClaimRef          struct {
+	Labels                   map[string]string `json:"labels"`
+	CloudProviderConfigRef   string            `json:"cloudProviderConfigRef"`
+	ClusterProviderConfigRef string            `json:"clusterProviderConfigRef"`
+	ClusterName              string            `json:"clusterName"`
+	DeletionPolicy           string            `json:"deletionPolicy"`
+	ClaimRef                 struct {
 		Namespace string `json:"namespace"`
 	} `json:"claimRef"`
 

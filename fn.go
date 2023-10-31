@@ -16,7 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
-const composedName = "function-subnets"
+const composedName = "crossplane-fn-generate-subnets"
 
 // RunFunction runs the Function.
 func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequest) (rsp *fnv1beta1.RunFunctionResponse, err error) {
@@ -69,12 +69,13 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 				}
 			}
 
+			f.log.Info("Adding subnet to provider list", "subnet", subnetID)
 			objectSpec := &unstructured.Unstructured{
 				Object: map[string]interface{}{
 					"apiVersion": "ec2.aws.upbound.io/v1beta1",
 					"kind":       "Subnet",
 					"metadata": map[string]interface{}{
-						"name": subnetID,
+						"name": fmt.Sprintf("%s-%s", f.composite.Spec.ClusterName, subnetID),
 						"annotations": map[string]interface{}{
 							"crossplane.io/external-name": subnetID,
 						},

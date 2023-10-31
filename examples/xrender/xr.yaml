@@ -43,14 +43,11 @@ spec:
     app.kubernetes.io/instance: eks-import
     app.kubernetes.io/managed-by: crossplane
     provider: aws
-  namespace: default
-  parameters:
-    awsProviderConfigRef: aws
-    clusterName: example
-    deletionPolicy: Delete
-    kubernetesProviderConfigRef: kubernetes-provider
-    nodeGroupName: ng-1
-    region: eu-central-1
+  cloudProviderConfigRef: aws
+  clusterName: example
+  deletionPolicy: Delete
+  clusterProviderConfigRef: kubernetes-provider
+  region: eu-central-1
   resourceRefs:
   - apiVersion: eks.aws.upbound.io/v1beta1
     kind: Cluster
