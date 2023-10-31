@@ -4,7 +4,7 @@ kind: Function
 metadata:
   name: function-generate-subnets
   annotations:
-    xrender.crossplane.io/runtime: Development
+    render.crossplane.io/runtime: Development
 spec:
   package: docker.io/choclab/function-generate-subnets:v0.0.1
 ---
