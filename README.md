@@ -12,12 +12,12 @@ information from those objects to a field on the composite resource.
 >
 > The example composition is also written for Crossplane v1.14 and will
 > not work on any current MC version.
-> 
+>
 > To support this, the script [`kind.sh`](./kind.sh) is provided to
 > help you understand how this works by spinning crossplane up inside a
 > kind cluster for local development.
 
-In order to use this function as part of the [Composition], the composition 
+In order to use this function as part of the [Composition], the composition
 must be written to use pipeline mode. This is a (currently undocumented)
 mode for compositions.
 
@@ -163,7 +163,7 @@ go run . --insecure -d
 whilst in a second window, run:
 
 ```bash
-xrender examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/observed.yaml
+crossplane beta render examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/observed.yaml
 ```
 
 ## Known Issues
