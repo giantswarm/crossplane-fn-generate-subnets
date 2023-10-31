@@ -9,6 +9,7 @@
 *.dylib
 
 function-generate-subnets
+crossplane-fn-generate-subnets
 # Test binary, built with `go test -c`
 *.test
 

@@ -5,7 +5,38 @@ import (
 
 	"github.com/crossplane/crossplane-runtime/pkg/logging"
 	fnv1beta1 "github.com/crossplane/function-sdk-go/proto/v1beta1"
+	"github.com/giantswarm/xfnlib/pkg/composite"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+// Function returns whatever response you ask it to.
+type Function struct {
+	fnv1beta1.UnimplementedFunctionRunnerServiceServer
+	log       logging.Logger
+	composed  *composite.Composition
+	composite XRObject
+}
+
+// XRSpec is the definition of the XR as an object
+type XRSpec struct {
+	Labels            map[string]string `json:"labels"`
+	ProviderConfigRef string            `json:"providerConfigRef"`
+	DeletionPolicy    string            `json:"deletionPolicy"`
+	ClaimRef          struct {
+		Namespace string `json:"namespace"`
+	} `json:"claimRef"`
+
+	CompositionSelector struct {
+		MatchLabels struct {
+			Provider string `json:"provider"`
+		} `json:"matchLabels"`
+	} `json:"compositionSelector"`
+}
+
+type XRObject struct {
+	Metadata metav1.ObjectMeta `json:"metadata"`
+	Spec     XRSpec            `json:"spec"`
+}
 
 // VpcConfig Describes what the VPC looks like
 type VpcConfig struct {
@@ -63,13 +94,6 @@ type ClusterObject struct {
 	Metadata Metadata      `json:"metadata"`
 	Spec     ClusterSpec   `json:"spec"`
 	Status   ClusterStatus `json:"status"`
-}
-
-// Function returns whatever response you ask it to.
-type Function struct {
-	fnv1beta1.UnimplementedFunctionRunnerServiceServer
-
-	log logging.Logger
 }
 
 type SubnetObject struct {
