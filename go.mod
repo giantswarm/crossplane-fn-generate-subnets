@@ -6,8 +6,8 @@ toolchain go1.21.1
 
 require (
 	github.com/alecthomas/kong v0.8.1
-	github.com/crossplane/crossplane-runtime v1.14.0-rc.1
-	github.com/crossplane/function-sdk-go v0.0.0-20231030233400-80ca76d9668f
+	github.com/crossplane/crossplane-runtime v1.14.0
+	github.com/crossplane/function-sdk-go v0.0.0-20231101104313-a69a7e7358de
 	github.com/giantswarm/xfnlib v0.0.0-20231101162043-510e773708f8
 	github.com/google/go-cmp v0.6.0
 	google.golang.org/protobuf v1.31.0
@@ -26,7 +26,7 @@ require (
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-json-experiment/json v0.0.0-20231013223334-54c864be5b8d // indirect
-	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/zapr v1.2.4 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
