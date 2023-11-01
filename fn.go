@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/crossplane/crossplane-runtime/pkg/errors"
@@ -59,8 +58,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 			var name resource.Name = resource.Name(fmt.Sprintf("%s-%s", composedName, subnetID))
 			if subnet, ok := f.composed.ObservedComposed[name]; ok {
 				var sn SubnetObject
-				str, _ := json.Marshal(subnet.Resource.Object)
-				if err := json.Unmarshal(str, &sn); err != nil {
+				if err := composite.To(subnet.Resource.Object, &sn); err != nil {
 					continue
 				}
 
@@ -98,7 +96,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 				},
 			}
 
-			if err = f.composed.AddDesired(subnetID, objectSpec); err != nil {
+			if err = f.composed.AddDesired(string(name), objectSpec); err != nil {
 				f.log.Info("Failed to add desired object", "subnet", subnetID, "object", objectSpec, "  #  err", err)
 				continue
 			}
@@ -106,9 +104,12 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	}
 	f.log.Debug(string(input.Spec.ClusterRef), "Subnets", subnetDetails)
 
-	if err = f.patchFieldValueToObject(input.Spec.PatchTo, subnetDetails, f.composed.DesiredComposite.Resource); err != nil {
-		response.Fatal(rsp, errors.Wrapf(err, "cannot render ToComposite patches for composed resource %q", input.Spec.PatchTo))
-		return rsp, nil
+	if len(subnetDetails) > 0 {
+		// Don't patch unless we have a populated array
+		if err = f.patchFieldValueToObject(input.Spec.PatchTo, subnetDetails, f.composed.DesiredComposite.Resource); err != nil {
+			response.Fatal(rsp, errors.Wrapf(err, "cannot render ToComposite patches for composed resource %q", input.Spec.PatchTo))
+			return rsp, nil
+		}
 	}
 
 	if err = f.composed.ToResponse(rsp); err != nil {

@@ -8,7 +8,7 @@ require (
 	github.com/alecthomas/kong v0.8.1
 	github.com/crossplane/crossplane-runtime v1.14.0-rc.1
 	github.com/crossplane/function-sdk-go v0.0.0-20231030233400-80ca76d9668f
-	github.com/giantswarm/xfnlib v0.0.0-20231030131937-61144db1085a
+	github.com/giantswarm/xfnlib v0.0.0-20231101162043-510e773708f8
 	github.com/google/go-cmp v0.6.0
 	google.golang.org/protobuf v1.31.0
 	k8s.io/apimachinery v0.28.3
