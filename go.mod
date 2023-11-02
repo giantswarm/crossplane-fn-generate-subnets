@@ -8,7 +8,7 @@ require (
 	github.com/alecthomas/kong v0.8.1
 	github.com/aws/aws-sdk-go-v2 v1.22.1
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.130.0
-	github.com/crossplane/crossplane-runtime v1.14.0-rc.1
+	github.com/crossplane/crossplane-runtime v1.14.1
 	github.com/crossplane/function-sdk-go v0.0.0-20231030233400-80ca76d9668f
 	github.com/giantswarm/xfnlib v0.0.0-20231101162043-510e773708f8
 	github.com/google/go-cmp v0.6.0
