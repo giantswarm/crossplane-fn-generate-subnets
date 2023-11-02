@@ -59,11 +59,17 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 			if subnet, ok := f.composed.ObservedComposed[name]; ok {
 				var sn SubnetObject
 				if err := composite.To(subnet.Resource.Object, &sn); err != nil {
+					f.log.Info(err.Error())
 					continue
 				}
 
 				if (sn.Status).AtProvider != nil {
-					subnetDetails = append(subnetDetails, f.subnetToCapiStruct(sn.Status.AtProvider))
+					var details map[string]interface{}
+					if details, err = f.subnetToCapaStruct(sn.Status.AtProvider, &object.Spec.ForProvider.Region, &object.Spec.ProviderConfig.Name); err != nil {
+						f.log.Info(err.Error())
+						continue
+					}
+					subnetDetails = append(subnetDetails, details)
 				}
 			}
 
@@ -107,7 +113,10 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	if len(subnetDetails) > 0 {
 		// Don't patch unless we have a populated array
 		if err = f.patchFieldValueToObject(input.Spec.PatchTo, subnetDetails, f.composed.DesiredComposite.Resource); err != nil {
-			response.Fatal(rsp, errors.Wrapf(err, "cannot render ToComposite patches for composed resource %q", input.Spec.PatchTo))
+			response.Fatal(rsp, errors.Wrapf(
+				err,
+				"cannot render ToComposite patches for composed resource %q",
+				input.Spec.PatchTo))
 			return rsp, nil
 		}
 	}
@@ -121,25 +130,24 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	return rsp, nil
 }
 
-func (f *Function) subnetToCapiStruct(subnet *Subnet) map[string]interface{} {
-	var value map[string]interface{}
+func (f *Function) subnetToCapaStruct(subnet *Subnet, region, providerConfig *string) (map[string]interface{}, error) {
+	var (
+		value  map[string]interface{}
+		err    error
+		public bool
+	)
 
-	// you can't really trust `mapPublicIpOnLaunch` but there isn't a better option
-	// without performing a lookup on the route table however without the route table ID
-	// we've no way at the moment of filtering for this subnet
-	// so this is quick and dirty
-	//
-	// The way CAPI does it is to look at the route tables and flag the subnets as public
-	// if they have an attached internet gateway
-	if _, ok := (*subnet).Tags["giantswarm.io/public"]; ok || (subnet.MapPublicIPOnLaunch != nil && *(subnet.MapPublicIPOnLaunch)) {
-		subnet.IsPublic = true
+	if public, err = f.FindAWSPublicRouteTables(&subnet.ID, region, providerConfig); err != nil {
+		return nil, err
 	}
+
+	subnet.IsPublic = public
 
 	if err := composite.To(subnet, &value); err == nil {
 		delete(value, "mapPublicIpOnLaunch")
 	}
 
-	return value
+	return value, nil
 }
 
 func (f *Function) patchFieldValueToObject(fieldPath string, value []interface{}, to runtime.Object) (err error) {
