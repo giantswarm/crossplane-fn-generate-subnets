@@ -52,7 +52,16 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 		vpcs = object.Status.AtProvider.VpcConfig
 	}
 
+	type subnetType struct {
+		objectSpec unstructured.Unstructured
+		subnetId   string
+	}
+	var (
+		subnetsToAdd map[resource.Name]subnetType = make(map[resource.Name]subnetType)
+		count        int                          = 0
+	)
 	for _, vpc := range vpcs {
+		count += len(vpc.Subnets)
 		for _, subnetID := range vpc.Subnets {
 			subnetID := subnetID
 			var name resource.Name = resource.Name(fmt.Sprintf("%s-%s", composedName, subnetID))
@@ -74,7 +83,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 			}
 
 			f.log.Info("Adding subnet to provider list", "subnet", subnetID)
-			objectSpec := &unstructured.Unstructured{
+			objectSpec := unstructured.Unstructured{
 				Object: map[string]interface{}{
 					"apiVersion": "ec2.aws.upbound.io/v1beta1",
 					"kind":       "Subnet",
@@ -102,15 +111,24 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 				},
 			}
 
-			if err = f.composed.AddDesired(string(name), objectSpec); err != nil {
-				f.log.Info("Failed to add desired object", "subnet", subnetID, "object", objectSpec, "  #  err", err)
+			subnetsToAdd[name] = subnetType{
+				subnetId:   subnetID,
+				objectSpec: objectSpec,
+			}
+		}
+	}
+
+	if len(subnetsToAdd) == count {
+		for name, item := range subnetsToAdd {
+			if err = f.composed.AddDesired(string(name), &item.objectSpec); err != nil {
+				f.log.Info("Failed to add desired object", "subnet", &item.subnetId, "object", item.objectSpec, "  #  err", err)
 				continue
 			}
 		}
 	}
-	f.log.Debug(string(input.Spec.ClusterRef), "Subnets", subnetDetails)
 
-	if len(subnetDetails) > 0 {
+	f.log.Debug(string(input.Spec.ClusterRef), "Subnets", subnetDetails)
+	if len(subnetDetails) == count {
 		// Don't patch unless we have a populated array
 		if err = f.patchFieldValueToObject(input.Spec.PatchTo, subnetDetails, f.composed.DesiredComposite.Resource); err != nil {
 			response.Fatal(rsp, errors.Wrapf(
