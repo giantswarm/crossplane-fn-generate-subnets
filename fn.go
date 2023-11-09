@@ -22,8 +22,13 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	f.log.Info("preparing function", composedName, req.GetMeta().GetTag())
 	rsp = response.To(req, response.DefaultTTL)
 
-	input := v1beta1.Input{}
-	if f.composed, err = composite.New(req, &input, &f.composite); err != nil {
+	var (
+		composed    *composite.Composition
+		compositeXr XRObject
+		input       v1beta1.Input
+	)
+
+	if composed, err = composite.New(req, &input, &compositeXr); err != nil {
 		response.Fatal(rsp, errors.Wrap(err, "error setting up function "+composedName))
 		return rsp, nil
 	}
@@ -36,7 +41,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 		subnetDetails []interface{} = make([]interface{}, 0)
 	)
 
-	if cluster, ok = f.composed.ObservedComposed[input.Spec.ClusterRef]; !ok {
+	if cluster, ok = composed.ObservedComposed[input.Spec.ClusterRef]; !ok {
 		response.Normal(rsp, "Waiting for resource")
 		return rsp, nil
 	}
@@ -65,7 +70,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 		for _, subnetID := range vpc.Subnets {
 			subnetID := subnetID
 			var name resource.Name = resource.Name(fmt.Sprintf("%s-%s", composedName, subnetID))
-			if subnet, ok := f.composed.ObservedComposed[name]; ok {
+			if subnet, ok := composed.ObservedComposed[name]; ok {
 				var sn SubnetObject
 				if err := composite.To(subnet.Resource.Object, &sn); err != nil {
 					f.log.Info(err.Error())
@@ -88,7 +93,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 					"apiVersion": "ec2.aws.upbound.io/v1beta1",
 					"kind":       "Subnet",
 					"metadata": map[string]interface{}{
-						"name": fmt.Sprintf("%s-%s", f.composite.Spec.ClusterName, subnetID),
+						"name": fmt.Sprintf("%s-%s", compositeXr.Spec.ClusterName, subnetID),
 						"annotations": map[string]interface{}{
 							"crossplane.io/external-name": subnetID,
 						},
@@ -120,7 +125,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 
 	if len(subnetsToAdd) == count {
 		for name, item := range subnetsToAdd {
-			if err = f.composed.AddDesired(string(name), &item.objectSpec); err != nil {
+			if err = composed.AddDesired(string(name), &item.objectSpec); err != nil {
 				f.log.Info("Failed to add desired object", "subnet", &item.subnetId, "object", item.objectSpec, "  #  err", err)
 				continue
 			}
@@ -130,7 +135,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	f.log.Debug(string(input.Spec.ClusterRef), "Subnets", subnetDetails)
 	if len(subnetDetails) == count {
 		// Don't patch unless we have a populated array
-		if err = f.patchFieldValueToObject(input.Spec.PatchTo, subnetDetails, f.composed.DesiredComposite.Resource); err != nil {
+		if err = f.patchFieldValueToObject(input.Spec.PatchTo, subnetDetails, composed.DesiredComposite.Resource); err != nil {
 			response.Fatal(rsp, errors.Wrapf(
 				err,
 				"cannot render ToComposite patches for composed resource %q",
@@ -139,7 +144,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 		}
 	}
 
-	if err = f.composed.ToResponse(rsp); err != nil {
+	if err = composed.ToResponse(rsp); err != nil {
 		response.Fatal(rsp, errors.Wrapf(err, "cannot convert composition to response %T", rsp))
 		return
 	}
