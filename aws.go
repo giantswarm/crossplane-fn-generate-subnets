@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -54,16 +53,13 @@ func (f *Function) FindAWSPublicRouteTables(subnetId, region, providerConfig *st
 	input = ec2.DescribeRouteTablesInput{
 		Filters: filters,
 	}
-	fmt.Println("HELLOWORLD 123")
 	// Set up the assume role clients
 	if cfg, err = awsConfig(region, providerConfig); err != nil {
 		err = errors.Wrap(err, "failed to load aws config for assume role")
 		return false, err
 	}
 
-	fmt.Println("HELLOWORLD")
 	ec2client := getEc2Client(cfg)
-	fmt.Println("HELLOWORLD")
 	if rtbls, err = DescribeRouteTables(context.TODO(), ec2client, &input); err != nil {
 		err = errors.Wrap(err, "failed to load aws route tables for subnet "+*subnetId)
 		return false, err

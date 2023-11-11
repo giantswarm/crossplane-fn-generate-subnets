@@ -187,7 +187,6 @@ func (f *Function) subnetToCapaStruct(subnet *fnc.AwsSubnet, region, provider *s
 		public bool
 	)
 
-	fmt.Println("HELLOWORLD")
 	if public, err = f.FindAWSPublicRouteTables(&subnet.ID, region, provider); err != nil {
 		return nil, err
 	}

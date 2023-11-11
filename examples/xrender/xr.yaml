@@ -47,11 +47,29 @@ spec:
   clusterName: example
   deletionPolicy: Delete
   clusterProviderConfigRef: kubernetes-provider
-  region: eu-central-1
+  regionOrLocation: eu-central-1
   resourceRefs:
   - apiVersion: eks.aws.upbound.io/v1beta1
     kind: Cluster
     name: example
+  - apiVersion: eks.aws.upbound.io/v1beta1
+    kind: Subnet
+    name: crossplane-fn-generate-subnets-subnet-12345678912345678
+  - apiVersion: eks.aws.upbound.io/v1beta1
+    kind: Subnet
+    name: crossplane-fn-generate-subnets-subnet-23456789123456781
+  - apiVersion: eks.aws.upbound.io/v1beta1
+    kind: Subnet
+    name: crossplane-fn-generate-subnets-subnet-34567891234567812
+  - apiVersion: eks.aws.upbound.io/v1beta1
+    kind: Subnet
+    name: crossplane-fn-generate-subnets-subnet-45678912345678123
+  - apiVersion: eks.aws.upbound.io/v1beta1
+    kind: Subnet
+    name: crossplane-fn-generate-subnets-subnet-56789123456781234
+  - apiVersion: eks.aws.upbound.io/v1beta1
+    kind: Subnet
+    name: crossplane-fn-generate-subnets-subnet-67891234567812345
 status:
   conditions:
   - lastTransitionTime: "2023-09-30T10:20:05Z"

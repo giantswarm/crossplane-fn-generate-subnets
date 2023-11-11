@@ -153,17 +153,37 @@ $ docker build .
 
 To test this application locally you need to first install [crossplane-cli].
 
-In one window, execute:
+The main function contains a "fake client" to bypass the calls to AWS.
+
+To enable this, use the flag `-f`
+
+For debug logs, use the flag `-d`
+
+All local testing must run in `insecure` mode.
 
 ```bash
-go run . --insecure -d
+go run . --insecure -df
 ```
 
-whilst in a second window, run:
+Next, in a second window run:
 
 ```bash
 crossplane beta render examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/observed.yaml
 ```
+
+To support different scenarios, different observed states have been created:
+
+- `notreconciled.yaml` contains the cluster in an unreconciled state
+
+  ```bash
+  crossplane beta render examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/notreconciled.yaml
+  ```
+
+- `partial-observed.yaml` returns the subnets without the `atProvider` reference defined
+
+  ```bash
+  crossplane beta render examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/partial-observed.yaml
+  ```
 
 ## Known Issues
 
