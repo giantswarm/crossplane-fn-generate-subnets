@@ -4,6 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"google.golang.org/protobuf/testing/protocmp"
@@ -16,6 +19,27 @@ import (
 	"github.com/crossplane/function-sdk-go/resource"
 	"github.com/crossplane/function-sdk-go/response"
 )
+
+type MockEc2Api struct {
+	ec2.Client
+}
+
+func (m *MockEc2Api) DescribeRouteTables(ctx context.Context,
+	params *ec2.DescribeRouteTablesInput,
+	optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
+	x := ec2.DescribeRouteTablesOutput{
+		RouteTables: []ec2types.RouteTable{
+			{
+				Associations: []ec2types.RouteTableAssociation{
+					{
+						GatewayId: aws.String("igw-bob2345"),
+					},
+				},
+			},
+		},
+	}
+	return &x, nil
+}
 
 func TestRunFunction(t *testing.T) {
 
@@ -34,7 +58,7 @@ func TestRunFunction(t *testing.T) {
 		want   want
 	}{
 		"InputIsUndefined": {
-			reason: "The Function should return a fatal result if no input was specified",
+			reason: "The Function should return a fatal response if specification is nil",
 			args: args{
 				req: &fnv1beta1.RunFunctionRequest{
 					Meta: &fnv1beta1.RequestMeta{Tag: "hello"},
@@ -50,7 +74,31 @@ func TestRunFunction(t *testing.T) {
 					Results: []*fnv1beta1.Result{
 						{
 							Severity: fnv1beta1.Severity_SEVERITY_FATAL,
-							Message:  "cannot get Function input from *v1beta1.RunFunctionRequest: spec is nil",
+							Message:  "object does not contain spec field",
+						},
+					},
+				},
+			},
+		},
+		"Spec is empty": {
+			reason: "The Function should return a fatal result if no input was specified",
+			args: args{
+				req: &fnv1beta1.RunFunctionRequest{
+					Meta: &fnv1beta1.RequestMeta{Tag: "hello"},
+					Input: resource.MustStructJSON(`{
+						"apiVersion": "dummy.fn.crossplane.io",
+						"kind": "Input",
+						"spec": {}
+					}`),
+				},
+			},
+			want: want{
+				rsp: &fnv1beta1.RunFunctionResponse{
+					Meta: &fnv1beta1.ResponseMeta{Tag: "hello", Ttl: durationpb.New(response.DefaultTTL)},
+					Results: []*fnv1beta1.Result{
+						{
+							Severity: fnv1beta1.Severity_SEVERITY_NORMAL,
+							Message:  "waiting for resource",
 						},
 					},
 				},
@@ -74,7 +122,7 @@ func TestRunFunction(t *testing.T) {
 					Results: []*fnv1beta1.Result{
 						{
 							Severity: fnv1beta1.Severity_SEVERITY_NORMAL,
-							Message:  "Waiting for resource",
+							Message:  "waiting for resource",
 						},
 					},
 				},
@@ -92,7 +140,16 @@ func TestRunFunction(t *testing.T) {
 					}),
 					Observed: &fnv1beta1.State{
 						Composite: &fnv1beta1.Resource{
-							Resource: resource.MustStructJSON(`{"apiVersion":"example.org/v1","kind":"XR"}`),
+							Resource: resource.MustStructJSON(`{
+								"apiVersion":"example.org/v1",
+								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete"
+								}
+							}`),
 						},
 						Resources: map[string]*fnv1beta1.Resource{
 							"eks-cluster": {
@@ -138,7 +195,16 @@ func TestRunFunction(t *testing.T) {
 					},
 					Desired: &fnv1beta1.State{
 						Composite: &fnv1beta1.Resource{
-							Resource: resource.MustStructJSON(`{"apiVersion":"example.org/v1","kind":"XR"}`),
+							Resource: resource.MustStructJSON(`{
+								"apiVersion":"example.org/v1",
+								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete"
+								}
+							}`),
 						},
 						Resources: map[string]*fnv1beta1.Resource{
 							"eks-cluster": {
@@ -186,8 +252,11 @@ func TestRunFunction(t *testing.T) {
 							Resource: resource.MustStructJSON(`{
 								"apiVersion":"example.org/v1",
 								"kind":"XR",
-								"status": {
-									"subnets": []
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete"
 								}
 							}`),
 						},
@@ -219,7 +288,7 @@ func TestRunFunction(t *testing.T) {
 								}
 							}`),
 							},
-							"function-subnets-subnet-123456": {
+							"crossplane-fn-generate-subnets-subnet-123456": {
 								Ready: fnv1beta1.Ready_READY_TRUE,
 								Resource: resource.MustStructJSON(`{
 								"apiVersion": "ec2.aws.upbound.io/v1beta1",
@@ -231,7 +300,7 @@ func TestRunFunction(t *testing.T) {
 									"labels": {
 										"crossplane.io/claim-name": "example"
 									},
-									"name": "subnet-123456"
+									"name": "test-subnet-123456"
 								},
 								"spec": {
 									"managementPolicies": ["Observe"],
@@ -267,7 +336,16 @@ func TestRunFunction(t *testing.T) {
 					}),
 					Observed: &fnv1beta1.State{
 						Composite: &fnv1beta1.Resource{
-							Resource: resource.MustStructJSON(`{"apiVersion":"example.org/v1","kind":"XR"}`),
+							Resource: resource.MustStructJSON(`{
+								"apiVersion":"example.org/v1",
+								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete"
+								}
+							}`),
 						},
 						Resources: map[string]*fnv1beta1.Resource{
 							"eks-cluster": {
@@ -309,7 +387,7 @@ func TestRunFunction(t *testing.T) {
 									}
 								}`),
 							},
-							"function-subnets-subnet-123456": {
+							"crossplane-fn-generate-subnets-subnet-123456": {
 								Resource: resource.MustStructJSON(`{
 									"apiVersion": "ec2.aws.upbound.io/v1beta1",
 									"kind": "Subnet",
@@ -353,7 +431,16 @@ func TestRunFunction(t *testing.T) {
 					},
 					Desired: &fnv1beta1.State{
 						Composite: &fnv1beta1.Resource{
-							Resource: resource.MustStructJSON(`{"apiVersion":"example.org/v1","kind":"XR"}`),
+							Resource: resource.MustStructJSON(`{
+								"apiVersion":"example.org/v1",
+								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete"
+								}
+							}`),
 						},
 						Resources: map[string]*fnv1beta1.Resource{
 							"eks-cluster": {
@@ -383,7 +470,7 @@ func TestRunFunction(t *testing.T) {
 									}
 								}`),
 							},
-							"function-subnets-subnet-123456": {
+							"crossplane-fn-generate-subnets-subnet-123456": {
 								Resource: resource.MustStructJSON(`{
 									"apiVersion": "ec2.aws.upbound.io/v1beta1",
 									"kind": "Subnet",
@@ -394,7 +481,7 @@ func TestRunFunction(t *testing.T) {
 										"labels": {
 											"crossplane.io/claim-name": "example"
 										},
-										"name": "subnet-123456"
+										"name": "test-subnet-123456"
 									},
 									"spec": {
 										"managementPolicies": ["Observe"],
@@ -430,6 +517,12 @@ func TestRunFunction(t *testing.T) {
 							Resource: resource.MustStructJSON(`{
 								"apiVersion":"example.org/v1",
 								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete"
+								},
 								"status": {
 									"subnets": [
 										{
@@ -438,7 +531,8 @@ func TestRunFunction(t *testing.T) {
 											"cidrBlock": "192.168.0.0/8",
 											"isIpV6": false,
 											"ipv6CidrBlock": "",
-											"isPublic": false
+											"isPublic": true,
+											"tags": {}
 										}
 									]
 								}
@@ -472,8 +566,8 @@ func TestRunFunction(t *testing.T) {
 									}
 								}`),
 							},
-							"function-subnets-subnet-123456": {
-								Ready: fnv1beta1.Ready_READY_TRUE,
+							"crossplane-fn-generate-subnets-subnet-123456": {
+								//Ready: fnv1beta1.Ready_READY_TRUE,
 								Resource: resource.MustStructJSON(`{
 									"apiVersion": "ec2.aws.upbound.io/v1beta1",
 									"kind": "Subnet",
@@ -484,7 +578,7 @@ func TestRunFunction(t *testing.T) {
 										"labels": {
 											"crossplane.io/claim-name": "example"
 										},
-										"name": "subnet-123456"
+										"name": "test-subnet-123456"
 									},
 									"spec": {
 										"managementPolicies": ["Observe"],
@@ -510,6 +604,13 @@ func TestRunFunction(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
+			getEc2Client = func(aws.Config) EC2API {
+				return &MockEc2Api{}
+			}
+			awsConfig = func(region, provider *string) (aws.Config, error) {
+				return aws.Config{}, nil
+			}
+
 			f := &Function{log: logging.NewNopLogger()}
 			rsp, err := f.RunFunction(tc.args.ctx, tc.args.req)
 			if diff := cmp.Diff(tc.want.rsp, rsp, protocmp.Transform()); diff != "" {

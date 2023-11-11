@@ -51,18 +51,10 @@ spec:
               clusterProviderConfigRef:
                 description: Defines the name of the providerconfig used by `crossplane-contrib/provider-kubernetes`
                 type: string
-              labels:
-                additionalProperties:
-                  type: string
-                description: Labels is a set of additional labels to be applied to
-                  all objects
-                type: object
-                x-kubernetes-map-type: granular
               regionOrLocation:
                 description: Defines the region or location for cloud resources
                 type: string
             required:
-            - cloudProviderConfigRef
             - clusterName
             - clusterProviderConfigRef
             - regionOrLocation

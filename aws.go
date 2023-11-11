@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -23,6 +24,16 @@ func DescribeRouteTables(c context.Context, api EC2API, input *ec2.DescribeRoute
 	return api.DescribeRouteTables(c, input)
 }
 
+var (
+	getEc2Client = func(cfg aws.Config) EC2API {
+		return ec2.NewFromConfig(cfg)
+	}
+
+	awsConfig = func(region, provider *string) (aws.Config, error) {
+		return xfnaws.Config(region, provider)
+	}
+)
+
 func (f *Function) FindAWSPublicRouteTables(subnetId, region, providerConfig *string) (bool, error) {
 	var (
 		err        error
@@ -43,14 +54,16 @@ func (f *Function) FindAWSPublicRouteTables(subnetId, region, providerConfig *st
 	input = ec2.DescribeRouteTablesInput{
 		Filters: filters,
 	}
-
+	fmt.Println("HELLOWORLD 123")
 	// Set up the assume role clients
-	if cfg, err = xfnaws.Config(region, providerConfig); err != nil {
+	if cfg, err = awsConfig(region, providerConfig); err != nil {
 		err = errors.Wrap(err, "failed to load aws config for assume role")
 		return false, err
 	}
 
-	ec2client := ec2.NewFromConfig(cfg)
+	fmt.Println("HELLOWORLD")
+	ec2client := getEc2Client(cfg)
+	fmt.Println("HELLOWORLD")
 	if rtbls, err = DescribeRouteTables(context.TODO(), ec2client, &input); err != nil {
 		err = errors.Wrap(err, "failed to load aws route tables for subnet "+*subnetId)
 		return false, err

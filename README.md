@@ -141,8 +141,9 @@ $ go generate ./...
 $ docker run --rm -v $(pwd):/app -v ~/.cache/golangci-lint/v1.54.2:/root/.cache -w /app golangci/golangci-lint:v1.54.2 golangci-lint run
 
 $ go test -cover ./...
-?       github.com/crossplane/function-template-go/input/v1beta1        [no test files]
-ok      github.com/crossplane/function-template-go      0.006s  coverage: 71.1% of statements
+?       github.com/giantswarm/crossplane-fn-generate-subnets/pkg/composite/v1beta1      [no test files]
+?       github.com/giantswarm/crossplane-fn-generate-subnets/pkg/input/v1beta1  [no test files]
+ok      github.com/giantswarm/crossplane-fn-generate-subnets    0.021s  coverage: 67.5% of statements
 
 # Build a Docker image - see Dockerfile
 $ docker build .

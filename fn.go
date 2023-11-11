@@ -46,8 +46,13 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 		return rsp, nil
 	}
 
+	if input.Spec == nil {
+		response.Fatal(rsp, &composite.MissingSpec{})
+		return rsp, nil
+	}
+
 	if cluster, ok = composed.ObservedComposed[input.Spec.ClusterRef]; !ok {
-		response.Normal(rsp, "Waiting for resource")
+		response.Normal(rsp, "waiting for resource")
 		return rsp, nil
 	}
 
@@ -60,6 +65,17 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 
 	if object.Status.AtProvider != nil {
 		vpcs = object.Status.AtProvider.VpcConfig
+	}
+
+	var labels map[string]interface{} = make(map[string]interface{})
+	{
+		for k, v := range object.Metadata.Labels {
+			labels[k] = v
+		}
+
+		for k, v := range compositeXr.Spec.Labels {
+			labels[k] = v
+		}
 	}
 
 	for _, vpc := range vpcs {
@@ -88,6 +104,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 			}
 
 			f.log.Info("Adding subnet to provider list", "subnet", subnetID)
+			fmt.Printf("%+v\n", compositeXr.Spec)
 			objectSpec := unstructured.Unstructured{
 				Object: map[string]interface{}{
 					"apiVersion": "ec2.aws.upbound.io/v1beta1",
@@ -97,7 +114,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 						"annotations": map[string]interface{}{
 							"crossplane.io/external-name": subnetID,
 						},
-						"labels": object.Metadata.Labels,
+						"labels": labels,
 					},
 					"spec": map[string]interface{}{
 						"providerConfigRef": map[string]interface{}{
@@ -170,6 +187,7 @@ func (f *Function) subnetToCapaStruct(subnet *fnc.AwsSubnet, region, provider *s
 		public bool
 	)
 
+	fmt.Println("HELLOWORLD")
 	if public, err = f.FindAWSPublicRouteTables(&subnet.ID, region, provider); err != nil {
 		return nil, err
 	}
