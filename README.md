@@ -4,62 +4,24 @@ A [Crossplane] Composition Function which will generate an ObserveOnly subnet
 object for each subnet ID found in an EKS cluster resource, then patch specific
 information from those objects to a field on the composite resource.
 
-## How it works
-
-> **Warning**
-> This plugin is requires Crossplane v1.14 which is currently unreleased
-> (due 1st November 2023).
->
-> The example composition is also written for Crossplane v1.14 and will
-> not work on any current MC version.
->
-> To support this, the script [`kind.sh`](./kind.sh) is provided to
-> help you understand how this works by spinning crossplane up inside a
-> kind cluster for local development.
-
 In order to use this function as part of the [Composition], the composition
-must be written to use pipeline mode. This is a (currently undocumented)
-mode for compositions.
+must be written to use pipeline mode. See the documentation on 
+[Composition functions] to better understand how this is integrated
 
-```yaml
-spec:
-  compositeTypeRef:
-    apiVersion: crossplane.giantswarm.io/v1alpha1
-    kind: CompositeEksImport
-  mode: Pipeline
-  pipeline:
-  - step: collect-cluster
-    ...
-  - step: generate-subnets
-    ...
-```
+## Composition integration
 
-> **Note**
-> To run the kind cluster, you need to open the kind.sh script and
-> edit the TODO for the kube secret to point at the credentials you have for
-> the cluster account.
->
-> Specifically the line to edit is:
->
-> ```bash
-> kubectl create secret generic aws-credentials -n crossplane \
->   --from-literal=creds="$(awk '/\[snail\]/{x=NR+2}(NR<=x){gsub("snail", "default"); print}' ~/.aws/credentials)"
-> ```
->
-> Where I have a aws/credentials entry for `snail` that I convert to `default` for the provider.
+This function is placed in the pipeline with a reference to the cluster object
+for that composition and an additional reference of where to patch information
+about the subnets it is generating for that provider.
 
-**Example:**
-
-<details>
-
-<summary>composition.yaml</summary>
+This should be specified in your composition as:
 
 ```yaml
   - step: generate-subnets
     functionRef:
       name: function-generate-subnets
     input:
-      apiVersion: generator.fn.giantswarm.io
+      apiVersion: generatesubnets.fn.giantswarm.io
       kind: Subnet
       metadata:
         namespace: crossplane
@@ -68,11 +30,47 @@ spec:
         patchTo: status.subnets
 ```
 
-</details>
+The function requires information from the XR and is opinionated about how that
+information should be presented.
+
+In order to support the integration of this function into your pipelines,
+details about the XR requirements are published in 
+[definition_xrs.yaml](./package/composite/definition_xrobjectdefinitions.yaml).
+
+The relevant sections of this XR specification should be extracted and merged
+into the definition you are writing. The specification cannot be used 
+independantly as an XRD as it does not define all the required elements of an 
+XRD, just the custom fields required by this function.
+
+## How it works
+
+This function reads the subnets from a cluster object relevant to the cloud
+provider.
+
+> For each integrated type, only the official upbound providers are supported.
+
+It then uses the subnet IDs to generate one `Subnet` object for each subnet in
+the list and adds these to the set of desired composed objects and allows them
+to reconcile.
+
+Once reconciliation is complete, the function collects information from the
+`status.atProvider` for each subnet and compiles this into a list of objects
+which is then applied to the status field of the XR.
+
+As part of the reconciliation, the function calls out to the cloud provider to
+retrieve additional information such as whether the subnet has an internet
+gateway attached which the function uses to determine whether the subnet is
+public or private.
+
+### Providers currently supported by this function
+
+- EKS cluster `clusters.eks.upbound.io`
+
+### Example status patch output
 
 <details>
 
-<summary>status.subnets</summary>
+<summary>status.aws.subnets</summary>
 
 ```yaml
     subnets:
@@ -130,7 +128,7 @@ kind: Function
 metadata:
   name: function-generate-subnets
 spec:
-  package: choclab/function-generate-subnets:v0.0.1
+  package: docker.io/giantswarm/crossplane-fn-generate-subnets:v0.1.0
 ```
 
 ## Building
@@ -184,5 +182,6 @@ Upstream issue tracking EKS provider bug: [https://github.com/upbound/provider-a
 [Crossplane]: https://crossplane.io
 [crossplane-cli]: https://github.com/crossplane/crossplane/releases/tag/v1.14.0-rc.1
 [Composition]: https://docs.crossplane.io/v1.13/concepts/compositions
+[Composition functions]: https://docs.crossplane.io/latest/concepts/compositions/#use-composition-functions
 [RunFunctionRequest]: https://github.com/crossplane/function-sdk-go/blob/a4ada4f934f6f8d3f9018581199c6c71e0343d13/proto/v1beta1/run_function.proto#L36
 [xrender]: https://github.com/crossplane-contrib/xrender

@@ -1,0 +1,132 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.13.0
+  name: xrobjectdefinitions.definition
+spec:
+  group: definition
+  names:
+    categories:
+    - crossplane
+    - composition
+    - functions
+    - subnets
+    kind: XrObjectDefinition
+    listKind: XrObjectDefinitionList
+    plural: xrobjectdefinitions
+    singular: xrobjectdefinition
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: "XrObjectDefinition contains information about the XR \n This
+          type is a meta-type for defining the XRD spec as it excludes fields normally
+          defined as part of a standard XRD definition"
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: Spec The specification of the XR
+            properties:
+              cloudProviderConfigRef:
+                description: Defines the name of the providerconfig for the cloud
+                  provider
+                type: string
+              clusterName:
+                description: Defines the name of the cluster to map from
+                type: string
+              clusterProviderConfigRef:
+                description: Defines the name of the providerconfig used by `crossplane-contrib/provider-kubernetes`
+                type: string
+              labels:
+                additionalProperties:
+                  type: string
+                description: Labels is a set of additional labels to be applied to
+                  all objects
+                type: object
+                x-kubernetes-map-type: granular
+              regionOrLocation:
+                description: Defines the region or location for cloud resources
+                type: string
+            required:
+            - cloudProviderConfigRef
+            - clusterName
+            - clusterProviderConfigRef
+            - regionOrLocation
+            type: object
+          status:
+            description: Status information about the status of the XR
+            properties:
+              aws:
+                description: AWS holds information related to the AWS provider
+                properties:
+                  subnets:
+                    description: The list of subnets mapped by the function for AWS
+                    items:
+                      description: AwsSubnet is an object that holds information about
+                        a subnet defined in AWS
+                      properties:
+                        availabilityZone:
+                          description: AvailabilityZone The availability zone this
+                            subnet is located in
+                          type: string
+                        cidrBlock:
+                          description: The Ipv4 cidr block defined for this subnet
+                          type: string
+                        id:
+                          description: ID The subnet ID
+                          type: string
+                        ipv6CidrBlock:
+                          description: The IPv6 CIDR block (if defined) for this subnet
+                          type: string
+                        isIpV6:
+                          description: Is this subnet enabled for IPv6
+                          type: boolean
+                        isPublic:
+                          description: Is this a public subnet. Determined by validating
+                            an internet gateway on the subnet route tables
+                          type: boolean
+                        mapPublicIpOnLaunch:
+                          description: Does this subnet map public IPs to instances
+                            started in it
+                          nullable: true
+                          type: boolean
+                        tags:
+                          additionalProperties:
+                            type: string
+                          description: A set of tags applied to this subnet
+                          type: object
+                          x-kubernetes-map-type: granular
+                      required:
+                      - id
+                      type: object
+                      x-kubernetes-map-type: granular
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - id
+                    x-kubernetes-list-type: map
+                required:
+                - subnets
+                type: object
+            required:
+            - aws
+            type: object
+        required:
+        - spec
+        - status
+        type: object
+    served: true
+    storage: true
