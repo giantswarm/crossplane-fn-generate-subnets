@@ -85,7 +85,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 			if subnet, ok := composed.ObservedComposed[name]; ok {
 				var sn AwsSubnetObject
 				if err := composite.To(subnet.Resource.Object, &sn); err != nil {
-					f.log.Info(err.Error())
+					f.log.Debug("RunFunction", "failed converting subnet resource", err)
 					continue
 				}
 
@@ -96,7 +96,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 						provider *string = &compositeXr.Spec.CloudProviderConfigRef
 					)
 					if details, err = f.subnetToCapaStruct(sn.Status.AtProvider, region, provider); err != nil {
-						f.log.Info(err.Error())
+						f.log.Debug("RunFunction", "failed retrieving details of subnet", err)
 						continue
 					}
 					subnetDetails = append(subnetDetails, details)

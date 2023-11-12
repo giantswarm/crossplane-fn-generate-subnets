@@ -142,7 +142,7 @@ $ docker run --rm -v $(pwd):/app -v ~/.cache/golangci-lint/v1.54.2:/root/.cache 
 $ go test -cover ./...
 ?       github.com/giantswarm/crossplane-fn-generate-subnets/pkg/composite/v1beta1      [no test files]
 ?       github.com/giantswarm/crossplane-fn-generate-subnets/pkg/input/v1beta1  [no test files]
-ok      github.com/giantswarm/crossplane-fn-generate-subnets    0.021s  coverage: 67.5% of statements
+ok      github.com/giantswarm/crossplane-fn-generate-subnets    0.022s  coverage: 72.0% of statements
 
 # Build a Docker image - see Dockerfile
 $ docker build .

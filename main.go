@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"math/rand"
 
 	"github.com/alecthomas/kong"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
@@ -32,13 +31,16 @@ type FakeClient struct {
 	ec2.Client
 }
 
+var fakeClientIndex int = 0
+
 // Fakes the lookup to AWS inside the FakeClient
 func (f *FakeClient) DescribeRouteTables(ctx context.Context, params *ec2.DescribeRouteTablesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
-	i := rand.Intn(2)
+
 	var x string
-	if i%2 == 0 {
+	if fakeClientIndex%2 == 0 {
 		x = "igw-1a2b3c4d5e6f"
 	}
+	fakeClientIndex++
 	return &ec2.DescribeRouteTablesOutput{
 		RouteTables: []ec2types.RouteTable{
 			{

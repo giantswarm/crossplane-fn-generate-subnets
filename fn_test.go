@@ -20,17 +20,43 @@ import (
 	"github.com/crossplane/function-sdk-go/response"
 )
 
-type MockEc2Api struct {
+type MockEc2ApiRtGwId struct {
 	ec2.Client
 }
 
-func (m *MockEc2Api) DescribeRouteTables(ctx context.Context,
+func (m *MockEc2ApiRtGwId) DescribeRouteTables(ctx context.Context,
 	params *ec2.DescribeRouteTablesInput,
 	optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
 	x := ec2.DescribeRouteTablesOutput{
 		RouteTables: []ec2types.RouteTable{
 			{
 				Associations: []ec2types.RouteTableAssociation{
+					{
+						GatewayId: aws.String("igw-bob2345"),
+					},
+				},
+			},
+		},
+	}
+	return &x, nil
+}
+
+type MockEc2ApiRtRouteGwId struct {
+	ec2.Client
+}
+
+func (m *MockEc2ApiRtRouteGwId) DescribeRouteTables(ctx context.Context,
+	params *ec2.DescribeRouteTablesInput,
+	optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error) {
+	x := ec2.DescribeRouteTablesOutput{
+		RouteTables: []ec2types.RouteTable{
+			{
+				Associations: []ec2types.RouteTableAssociation{
+					{
+						GatewayId: nil,
+					},
+				},
+				Routes: []ec2types.Route{
 					{
 						GatewayId: aws.String("igw-bob2345"),
 					},
@@ -52,10 +78,16 @@ func TestRunFunction(t *testing.T) {
 		err error
 	}
 
+	type mocks struct {
+		ec2 func(cfg aws.Config) AwsEc2Api
+		aws func(region, provider *string) (aws.Config, error)
+	}
+
 	cases := map[string]struct {
 		reason string
 		args   args
 		want   want
+		mocks  mocks
 	}{
 		"InputIsUndefined": {
 			reason: "The Function should return a fatal response if specification is nil",
@@ -79,6 +111,7 @@ func TestRunFunction(t *testing.T) {
 					},
 				},
 			},
+			mocks: mocks{},
 		},
 		"Spec is empty": {
 			reason: "The Function should return a fatal result if no input was specified",
@@ -103,6 +136,7 @@ func TestRunFunction(t *testing.T) {
 					},
 				},
 			},
+			mocks: mocks{},
 		},
 		"NormalResponseWaitingWhenClusterRefDoesntExist": {
 			reason: "When cluster ref is undefined, we get a normal response",
@@ -127,6 +161,7 @@ func TestRunFunction(t *testing.T) {
 					},
 				},
 			},
+			mocks: mocks{},
 		},
 		"NormalResponseCreateSubnets": {
 			reason: "When a cluster is found and subnets are generated",
@@ -322,6 +357,7 @@ func TestRunFunction(t *testing.T) {
 					},
 				},
 			},
+			mocks: mocks{},
 		},
 
 		"NormalResponsePatchXR": {
@@ -343,7 +379,11 @@ func TestRunFunction(t *testing.T) {
 									"clusterName": "test",
 									"clusterProviderConfigRef": "stringy",
 									"regionOrLocation": "placey",
-									"deletionPolicy": "Delete"
+									"deletionPolicy": "Delete",
+									"labels": {
+										"test": "label",
+										"anothertest": "label"
+									}
 								}
 							}`),
 						},
@@ -388,6 +428,7 @@ func TestRunFunction(t *testing.T) {
 								}`),
 							},
 							"crossplane-fn-generate-subnets-subnet-123456": {
+								Ready: fnv1beta1.Ready_READY_TRUE,
 								Resource: resource.MustStructJSON(`{
 									"apiVersion": "ec2.aws.upbound.io/v1beta1",
 									"kind": "Subnet",
@@ -438,7 +479,11 @@ func TestRunFunction(t *testing.T) {
 									"clusterName": "test",
 									"clusterProviderConfigRef": "stringy",
 									"regionOrLocation": "placey",
-									"deletionPolicy": "Delete"
+									"deletionPolicy": "Delete",
+									"labels": {
+										"test": "label",
+										"anothertest": "label"
+									}
 								}
 							}`),
 						},
@@ -471,6 +516,7 @@ func TestRunFunction(t *testing.T) {
 								}`),
 							},
 							"crossplane-fn-generate-subnets-subnet-123456": {
+								Ready: fnv1beta1.Ready_READY_TRUE,
 								Resource: resource.MustStructJSON(`{
 									"apiVersion": "ec2.aws.upbound.io/v1beta1",
 									"kind": "Subnet",
@@ -521,7 +567,11 @@ func TestRunFunction(t *testing.T) {
 									"clusterName": "test",
 									"clusterProviderConfigRef": "stringy",
 									"regionOrLocation": "placey",
-									"deletionPolicy": "Delete"
+									"deletionPolicy": "Delete",
+									"labels": {
+										"test": "label",
+										"anothertest": "label"
+									}
 								},
 								"status": {
 									"subnets": [
@@ -567,6 +617,208 @@ func TestRunFunction(t *testing.T) {
 								}`),
 							},
 							"crossplane-fn-generate-subnets-subnet-123456": {
+								Ready: fnv1beta1.Ready_READY_TRUE,
+								Resource: resource.MustStructJSON(`{
+									"apiVersion": "ec2.aws.upbound.io/v1beta1",
+									"kind": "Subnet",
+									"metadata": {
+										"annotations": {
+											"crossplane.io/external-name": "subnet-123456"
+										},
+										"labels": {
+											"crossplane.io/claim-name": "example",
+											"test": "label",
+											"anothertest": "label"
+										},
+										"name": "test-subnet-123456"
+									},
+									"spec": {
+										"managementPolicies": ["Observe"],
+										"forProvider": {
+											"region": "eu-central-1",
+											"vpcId": "vpc-12345678"
+										},
+										"providerConfigRef": {
+											"name": "example"
+										},
+										"writeConnectionSecretToRef": {
+											"name": "subnet-123456",
+											"namespace": "example"
+										}
+									}
+								}`),
+							},
+						},
+					},
+				},
+			},
+			mocks: mocks{
+				ec2: func(aws.Config) AwsEc2Api {
+					return &MockEc2ApiRtGwId{}
+				},
+				aws: func(region, provider *string) (aws.Config, error) {
+					return aws.Config{}, nil
+				},
+			},
+		},
+
+		"NormalResponsePatchXRRouteTableRoute": {
+			reason: "When a cluster is found and subnets are generated",
+			args: args{
+				req: &fnv1beta1.RunFunctionRequest{
+					Input: resource.MustStructObject(&v1beta1.Input{
+						Spec: &v1beta1.Spec{
+							ClusterRef: "eks-cluster",
+							PatchTo:    "status.subnets",
+						},
+					}),
+					Observed: &fnv1beta1.State{
+						Composite: &fnv1beta1.Resource{
+							Resource: resource.MustStructJSON(`{
+								"apiVersion":"example.org/v1",
+								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete",
+									"labels": {
+										"test": "label",
+										"anothertest": "label"
+									}
+								}
+							}`),
+						},
+						Resources: map[string]*fnv1beta1.Resource{
+							"eks-cluster": {
+								Resource: resource.MustStructJSON(`{
+									"apiVersion": "eks.aws.upbound.io/v1beta1",
+									"kind": "Cluster",
+									"metadata": {
+										"annotations": {
+											"crossplane.io/external-name": "example",
+											"crossplane.io/composition-resource-name": "eks-cluster"
+										},
+										"labels": {
+											"crossplane.io/claim-name": "example"
+										}
+									},
+									"managementPolicies": ["Observe"],
+									"spec": {
+										"forProvider": {
+											"region": "eu-central-1"
+										},
+										"providerConfigRef": {
+											"name": "example"
+										},
+										"writeConnectionSecretToRef": {
+											"namespace": "example"
+										}
+									},
+									"status": {
+										"atProvider": {
+											"vpcConfig": [
+												{
+													"vpcId": "vpc-12345678",
+													"subnetIds": [
+														"subnet-123456"
+													]
+												}
+											]
+										}
+									}
+								}`),
+							},
+							"crossplane-fn-generate-subnets-subnet-123456": {
+								Ready: fnv1beta1.Ready_READY_TRUE,
+								Resource: resource.MustStructJSON(`{
+									"apiVersion": "ec2.aws.upbound.io/v1beta1",
+									"kind": "Subnet",
+									"metadata": {
+										"annotations": {
+											"crossplane.io/external-name": "subnet-123456"
+										},
+										"labels": {
+											"crossplane.io/claim-name": "example"
+										},
+										"name": "subnet-123456"
+									},
+									"spec": {
+										"managementPolicies": ["Observe"],
+										"forProvider": {
+											"region": "eu-central-1",
+											"vpcId": "vpc-12345678"
+										},
+										"providerConfigRef": {
+											"name": "example"
+										},
+										"writeConnectionSecretToRef": {
+											"name": "subnet-123456",
+											"namespace": "example"
+										}
+									},
+									"status": {
+										"atProvider": {
+											"id": "subnet-123456",
+											"availabilityZone": "eu-central-1a",
+											"cidrBlock": "192.168.0.0/8",
+											"isIpV6": false,
+											"ipv6CidrBlock": "",
+											"tags": {},
+											"mapPublicIpOnLaunch": false
+										}
+									}
+								}`),
+							},
+						},
+					},
+					Desired: &fnv1beta1.State{
+						Composite: &fnv1beta1.Resource{
+							Resource: resource.MustStructJSON(`{
+								"apiVersion":"example.org/v1",
+								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete",
+									"labels": {
+										"test": "label",
+										"anothertest": "label"
+									}
+								}
+							}`),
+						},
+						Resources: map[string]*fnv1beta1.Resource{
+							"eks-cluster": {
+								Resource: resource.MustStructJSON(`{
+									"apiVersion": "eks.aws.upbound.io/v1beta1",
+									"kind": "Cluster",
+									"metadata": {
+										"annotations": {
+											"crossplane.io/external-name": "example",
+											"crossplane.io/composition-resource-name": "eks-cluster"
+										},
+										"labels": {
+											"crossplane.io/claim-name": "example"
+										}
+									},
+									"managementPolicies": ["Observe"],
+									"spec": {
+										"forProvider": {
+											"region": "eu-central-1"
+										},
+										"providerConfigRef": {
+											"name": "example"
+										},
+										"writeConnectionSecretToRef": {
+											"namespace": "example"
+										}
+									}
+								}`),
+							},
+							"crossplane-fn-generate-subnets-subnet-123456": {
+								Ready: fnv1beta1.Ready_READY_TRUE,
 								Resource: resource.MustStructJSON(`{
 									"apiVersion": "ec2.aws.upbound.io/v1beta1",
 									"kind": "Subnet",
@@ -599,16 +851,124 @@ func TestRunFunction(t *testing.T) {
 					},
 				},
 			},
+			want: want{
+				rsp: &fnv1beta1.RunFunctionResponse{
+					Meta: &fnv1beta1.ResponseMeta{Ttl: durationpb.New(response.DefaultTTL)},
+					Results: []*fnv1beta1.Result{
+						{
+							Severity: fnv1beta1.Severity_SEVERITY_NORMAL,
+							Message:  "Successful run",
+						},
+					},
+					Desired: &fnv1beta1.State{
+						Composite: &fnv1beta1.Resource{
+							Resource: resource.MustStructJSON(`{
+								"apiVersion":"example.org/v1",
+								"kind":"XR",
+								"spec": {
+									"clusterName": "test",
+									"clusterProviderConfigRef": "stringy",
+									"regionOrLocation": "placey",
+									"deletionPolicy": "Delete",
+									"labels": {
+										"test": "label",
+										"anothertest": "label"
+									}
+								},
+								"status": {
+									"subnets": [
+										{
+											"id": "subnet-123456",
+											"availabilityZone": "eu-central-1a",
+											"cidrBlock": "192.168.0.0/8",
+											"isIpV6": false,
+											"ipv6CidrBlock": "",
+											"isPublic": true,
+											"tags": {}
+										}
+									]
+								}
+							}`),
+						},
+						Resources: map[string]*fnv1beta1.Resource{
+							"eks-cluster": {
+								Resource: resource.MustStructJSON(`{
+									"apiVersion": "eks.aws.upbound.io/v1beta1",
+									"kind": "Cluster",
+									"metadata": {
+										"annotations": {
+											"crossplane.io/external-name": "example",
+											"crossplane.io/composition-resource-name": "eks-cluster"
+										},
+										"labels": {
+											"crossplane.io/claim-name": "example"
+										}
+									},
+									"managementPolicies": ["Observe"],
+									"spec": {
+										"forProvider": {
+											"region": "eu-central-1"
+										},
+										"providerConfigRef": {
+											"name": "example"
+										},
+										"writeConnectionSecretToRef": {
+											"namespace": "example"
+										}
+									}
+								}`),
+							},
+							"crossplane-fn-generate-subnets-subnet-123456": {
+								Ready: fnv1beta1.Ready_READY_TRUE,
+								Resource: resource.MustStructJSON(`{
+									"apiVersion": "ec2.aws.upbound.io/v1beta1",
+									"kind": "Subnet",
+									"metadata": {
+										"annotations": {
+											"crossplane.io/external-name": "subnet-123456"
+										},
+										"labels": {
+											"crossplane.io/claim-name": "example",
+											"test": "label",
+											"anothertest": "label"
+										},
+										"name": "test-subnet-123456"
+									},
+									"spec": {
+										"managementPolicies": ["Observe"],
+										"forProvider": {
+											"region": "eu-central-1",
+											"vpcId": "vpc-12345678"
+										},
+										"providerConfigRef": {
+											"name": "example"
+										},
+										"writeConnectionSecretToRef": {
+											"name": "subnet-123456",
+											"namespace": "example"
+										}
+									}
+								}`),
+							},
+						},
+					},
+				},
+			},
+			mocks: mocks{
+				ec2: func(aws.Config) AwsEc2Api {
+					return &MockEc2ApiRtRouteGwId{}
+				},
+				aws: func(region, provider *string) (aws.Config, error) {
+					return aws.Config{}, nil
+				},
+			},
 		},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			getEc2Client = func(aws.Config) AwsEc2Api {
-				return &MockEc2Api{}
-			}
-			awsConfig = func(region, provider *string) (aws.Config, error) {
-				return aws.Config{}, nil
-			}
+
+			getEc2Client = tc.mocks.ec2
+			awsConfig = tc.mocks.aws
 
 			f := &Function{log: logging.NewNopLogger()}
 			rsp, err := f.RunFunction(tc.args.ctx, tc.args.req)
@@ -620,5 +980,15 @@ func TestRunFunction(t *testing.T) {
 				t.Errorf("%s\nf.RunFunction(...): -want err, +got err:\n%s", tc.reason, diff)
 			}
 		})
+	}
+}
+
+func TestFakeClient(t *testing.T) {
+	setupFakeClient(true)
+	aws, _ := awsConfig(aws.String("eu-central-1"), aws.String("fakeProvider"))
+	api := getEc2Client(aws)
+	result, _ := DescribeRouteTables(context.TODO(), api, nil)
+	if *result.RouteTables[0].Associations[0].GatewayId != "igw-1a2b3c4d5e6f" {
+		t.Error("fake client failed")
 	}
 }
