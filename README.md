@@ -139,13 +139,13 @@ $ go generate ./...
 # Lint the code
 $ docker run --rm -v $(pwd):/app -v ~/.cache/golangci-lint/v1.54.2:/root/.cache -w /app golangci/golangci-lint:v1.54.2 golangci-lint run
 
-$ go test -cover ./...
+$ go test ./... -coverprofile=cover.out && go tool cover -html=cover.out
 ?       github.com/giantswarm/crossplane-fn-generate-subnets/pkg/composite/v1beta1      [no test files]
 ?       github.com/giantswarm/crossplane-fn-generate-subnets/pkg/input/v1beta1  [no test files]
 ok      github.com/giantswarm/crossplane-fn-generate-subnets    0.022s  coverage: 72.0% of statements
 
 # Build a Docker image - see Dockerfile
-$ docker build .
+$ docker buildx build .
 ```
 
 ## Testing locally

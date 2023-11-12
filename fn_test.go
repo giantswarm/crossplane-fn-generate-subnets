@@ -359,7 +359,6 @@ func TestRunFunction(t *testing.T) {
 			},
 			mocks: mocks{},
 		},
-
 		"NormalResponsePatchXR": {
 			reason: "When a cluster is found and subnets are generated",
 			args: args{
@@ -661,7 +660,6 @@ func TestRunFunction(t *testing.T) {
 				},
 			},
 		},
-
 		"NormalResponsePatchXRRouteTableRoute": {
 			reason: "When a cluster is found and subnets are generated",
 			args: args{
