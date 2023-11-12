@@ -6,6 +6,12 @@ orbs:
 workflows:
   build-workflow:
     jobs:
+      - architect/go-test:
+          name: go-test
+          filters:
+            # Trigger job also on git tag.
+            tags:
+              only: /^v.*/
       - builddocker:
           context:
             - architect
