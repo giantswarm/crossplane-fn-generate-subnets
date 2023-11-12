@@ -567,7 +567,6 @@ func TestRunFunction(t *testing.T) {
 								}`),
 							},
 							"crossplane-fn-generate-subnets-subnet-123456": {
-								//Ready: fnv1beta1.Ready_READY_TRUE,
 								Resource: resource.MustStructJSON(`{
 									"apiVersion": "ec2.aws.upbound.io/v1beta1",
 									"kind": "Subnet",
@@ -604,7 +603,7 @@ func TestRunFunction(t *testing.T) {
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			getEc2Client = func(aws.Config) EC2API {
+			getEc2Client = func(aws.Config) AwsEc2Api {
 				return &MockEc2Api{}
 			}
 			awsConfig = func(region, provider *string) (aws.Config, error) {

@@ -104,7 +104,6 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 			}
 
 			f.log.Info("Adding subnet to provider list", "subnet", subnetID)
-			fmt.Printf("%+v\n", compositeXr.Spec)
 			objectSpec := unstructured.Unstructured{
 				Object: map[string]interface{}{
 					"apiVersion": "ec2.aws.upbound.io/v1beta1",
@@ -146,7 +145,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	if len(subnetsToAdd) == count {
 		for name, item := range subnetsToAdd {
 			if err = composed.AddDesired(string(name), &item.objectSpec); err != nil {
-				f.log.Info("Failed to add desired object", "subnet", &item.subnetId, "object", item.objectSpec, "  #  err", err)
+				f.log.Debug("RunFunction", "subnet", &item.subnetId, "object", item.objectSpec, "  #  err", err)
 				continue
 			}
 		}
@@ -161,10 +160,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	if len(subnetDetails) == count {
 		// Don't patch unless we have a populated array
 		if err = f.patchFieldValueToObject(input.Spec.PatchTo, subnetDetails, composed.DesiredComposite.Resource); err != nil {
-			response.Fatal(rsp, errors.Wrapf(
-				err,
-				"cannot render ToComposite patches for composed resource %q",
-				input.Spec.PatchTo))
+			response.Fatal(rsp, errors.Wrapf(err, "cannot render ToComposite patch %q", input.Spec.PatchTo))
 			return rsp, nil
 		}
 	}

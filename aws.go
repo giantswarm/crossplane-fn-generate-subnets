@@ -12,19 +12,19 @@ import (
 )
 
 // EC2API Describes the functions required to access data on the AWS EC2 api
-type EC2API interface {
+type AwsEc2Api interface {
 	DescribeRouteTables(ctx context.Context,
 		params *ec2.DescribeRouteTablesInput,
 		optFns ...func(*ec2.Options)) (*ec2.DescribeRouteTablesOutput, error)
 }
 
 // Get the EC2 Launch template versions for a given launch template
-func DescribeRouteTables(c context.Context, api EC2API, input *ec2.DescribeRouteTablesInput) (*ec2.DescribeRouteTablesOutput, error) {
+func DescribeRouteTables(c context.Context, api AwsEc2Api, input *ec2.DescribeRouteTablesInput) (*ec2.DescribeRouteTablesOutput, error) {
 	return api.DescribeRouteTables(c, input)
 }
 
 var (
-	getEc2Client = func(cfg aws.Config) EC2API {
+	getEc2Client = func(cfg aws.Config) AwsEc2Api {
 		return ec2.NewFromConfig(cfg)
 	}
 
@@ -33,6 +33,13 @@ var (
 	}
 )
 
+// FindAWSPublicRouteTables looks for the route tables attached to a given
+// subnet
+//
+// This method checks the ec2 api for route tables attached to a subnet.
+// Once discovered, it looks to see if there is an internet gateway attached
+// to that route table, returning true if that is the case marking this as a
+// public subnet
 func (f *Function) FindAWSPublicRouteTables(subnetId, region, providerConfig *string) (bool, error) {
 	var (
 		err        error

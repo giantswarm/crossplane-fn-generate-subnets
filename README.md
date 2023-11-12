@@ -34,8 +34,7 @@ The function requires information from the XR and is opinionated about how that
 information should be presented.
 
 In order to support the integration of this function into your pipelines,
-details about the XR requirements are published in 
-[definition_xrs.yaml](./package/composite/definition_xrobjectdefinitions.yaml).
+details about the XR requirements are published in [definition_xrs.yaml].
 
 The relevant sections of this XR specification should be extracted and merged
 into the definition you are writing. The specification cannot be used 
@@ -44,7 +43,7 @@ XRD, just the custom fields required by this function.
 
 ## How it works
 
-This function reads the subnets from a cluster object relevant to the cloud
+This function reads the subnet IDs from a cluster object relevant to the cloud
 provider.
 
 > For each integrated type, only the official upbound providers are supported.
@@ -168,7 +167,7 @@ go run . --insecure -df
 Next, in a second window run:
 
 ```bash
-crossplane beta render examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/observed.yaml
+crossplane beta render examples/xr.yaml examples/composition.yaml examples/functions.yaml -o examples/observed.yaml
 ```
 
 To support different scenarios, different observed states have been created:
@@ -176,20 +175,26 @@ To support different scenarios, different observed states have been created:
 - `notreconciled.yaml` contains the cluster in an unreconciled state
 
   ```bash
-  crossplane beta render examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/notreconciled.yaml
+  crossplane beta render examples/xr.yaml examples/composition.yaml examples/functions.yaml -o examples/notreconciled.yaml
   ```
 
 - `partial-observed.yaml` returns the subnets without the `atProvider` reference defined
 
   ```bash
-  crossplane beta render examples/xrender/xr.yaml examples/xrender/composition.yaml examples/xrender/functions.yaml -o examples/xrender/partial-observed.yaml
+  crossplane beta render examples/xr.yaml examples/composition.yaml examples/functions.yaml -o examples/partial-observed.yaml
   ```
 
 ## Known Issues
 
+When applying the patch if the specification of the status patch in your XRD 
+does not match the definition in [definition_xrs.yaml]
+then it is possible to invoke a situation whereby resources in the composition
+do not become ready. See [Crossplane issue 4968] for details on how this may occur
+
+[definition_xrs.yaml]: ./package/composite/definition_xrobjectdefinitions.yaml
 [Crossplane]: https://crossplane.io
 [crossplane-cli]: https://github.com/crossplane/crossplane/releases/tag/v1.14.0-rc.1
 [Composition]: https://docs.crossplane.io/v1.13/concepts/compositions
 [Composition functions]: https://docs.crossplane.io/latest/concepts/compositions/#use-composition-functions
 [RunFunctionRequest]: https://github.com/crossplane/function-sdk-go/blob/a4ada4f934f6f8d3f9018581199c6c71e0343d13/proto/v1beta1/run_function.proto#L36
-[xrender]: https://github.com/crossplane-contrib/xrender
+[Crossplane issue 4968]: https://github.com/crossplane/crossplane/issues/4968
