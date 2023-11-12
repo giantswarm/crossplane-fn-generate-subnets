@@ -5,8 +5,9 @@ import (
 
 	"github.com/crossplane/crossplane-runtime/pkg/logging"
 	fnv1beta1 "github.com/crossplane/function-sdk-go/proto/v1beta1"
-	fnc "github.com/giantswarm/crossplane-fn-generate-subnets/pkg/composite/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	fnc "github.com/giantswarm/crossplane-fn-generate-subnets/pkg/composite/v1beta1"
 )
 
 // Function is the general runtime of the composition function
