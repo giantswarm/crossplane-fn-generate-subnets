@@ -146,7 +146,7 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	if len(subnetsToAdd) == count {
 		for name, item := range subnetsToAdd {
 			if err = composed.AddDesired(string(name), &item.objectSpec); err != nil {
-				f.log.Debug("RunFunction", "subnet", &item.subnetId, "object", item.objectSpec, "  #  err", err)
+				f.log.Debug("RunFunction", "subnet", item.subnetId, "object", item.objectSpec, "  #  err", err)
 				continue
 			}
 		}
