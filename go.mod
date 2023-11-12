@@ -6,7 +6,7 @@ toolchain go1.21.1
 
 require (
 	github.com/alecthomas/kong v0.8.1
-	github.com/aws/aws-sdk-go-v2 v1.22.1
+	github.com/aws/aws-sdk-go-v2 v1.22.2
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.130.0
 	github.com/crossplane/crossplane-runtime v1.14.1
 	github.com/crossplane/function-sdk-go v0.1.0
