@@ -9,11 +9,12 @@ import (
 	fnv1beta1 "github.com/crossplane/function-sdk-go/proto/v1beta1"
 	"github.com/crossplane/function-sdk-go/resource"
 	"github.com/crossplane/function-sdk-go/response"
-	fnc "github.com/giantswarm/crossplane-fn-generate-subnets/pkg/composite/v1beta1"
-	"github.com/giantswarm/crossplane-fn-generate-subnets/pkg/input/v1beta1"
 	"github.com/giantswarm/xfnlib/pkg/composite"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+
+	fnc "github.com/giantswarm/crossplane-fn-generate-subnets/pkg/composite/v1beta1"
+	"github.com/giantswarm/crossplane-fn-generate-subnets/pkg/input/v1beta1"
 )
 
 const composedName = "crossplane-fn-generate-subnets"
