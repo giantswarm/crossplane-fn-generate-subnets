@@ -53,7 +53,6 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 	}
 
 	if cluster, ok = composed.ObservedComposed[input.Spec.ClusterRef]; !ok {
-		response.Normal(rsp, "waiting for resource")
 		return rsp, nil
 	}
 
@@ -172,7 +171,6 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 		return
 	}
 
-	response.Normal(rsp, "Successful run")
 	return rsp, nil
 }
 
