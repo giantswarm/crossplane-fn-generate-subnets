@@ -1,11 +1,10 @@
 // Package v1beta1 contains the input type for this Function
 // +kubebuilder:object:generate=true
-// +groupName=generatesubnets.fn.giantswarm.io
+// +groupName=networkdiscovery.fn.giantswarm.io
 // +versionName=v1beta1
 package v1beta1
 
 import (
-	"github.com/crossplane/function-sdk-go/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -26,9 +25,15 @@ type Input struct {
 
 // Spec - Defines the spec given to this input type, providing the required, and optional elements that may be defined
 type Spec struct {
-	// ClusterRef The XR name of the cluster
-	ClusterRef resource.Name `json:"clusterRef"`
+	// VpcName A path to the VPC name in the Claim
+	VpcNameRef string `json:"vpcRef"`
 
-	// PatchTo specified the path to apply the subnets patch
+	// Region A path to the region in the Claim
+	RegionRef string `json:"regionRef"`
+
+	// ProviderConfig A path to the provider config in the Claim
+	ProviderConfigRef string `json:"providerConfigRef"`
+
+	// PatchTo specified the path to apply the VPC map
 	PatchTo string `json:"patchTo"`
 }

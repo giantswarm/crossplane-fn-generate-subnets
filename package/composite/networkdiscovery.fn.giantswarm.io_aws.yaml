@@ -1,0 +1,116 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+  name: aws.networkdiscovery.fn.giantswarm.io
+spec:
+  group: networkdiscovery.fn.giantswarm.io
+  names:
+    categories:
+    - crossplane
+    - composition
+    kind: Aws
+    listKind: AwsList
+    plural: aws
+    singular: aws
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          vpcs:
+            additionalProperties:
+              description: Vpc holds VPC information
+              properties:
+                cidrBlock:
+                  description: The Ipv4 cidr block defined for this VPC
+                  type: string
+                id:
+                  description: ID The VPC ID
+                  type: string
+                internetGateway:
+                  description: The internet gateway defined in this VPC
+                  type: string
+                natGateways:
+                  additionalProperties:
+                    type: string
+                  description: A map of NAT gateways defined in this VPC
+                  type: object
+                  x-kubernetes-map-type: granular
+                privateRouteTables:
+                  additionalProperties:
+                    type: string
+                  description: A map of private route tables defined in this VPC
+                  type: object
+                  x-kubernetes-map-type: granular
+                privateSubnets:
+                  additionalProperties:
+                    type: string
+                  description: A map of private subnets defined in this VPC
+                  type: object
+                  x-kubernetes-map-type: granular
+                publicRouteTables:
+                  additionalProperties:
+                    type: string
+                  description: A map of public route tables defined in this VPC
+                  type: object
+                  x-kubernetes-map-type: granular
+                publicSubnets:
+                  additionalProperties:
+                    type: string
+                  description: A map of public subnets defined in this VPC
+                  type: object
+                  x-kubernetes-map-type: granular
+                securityGroups:
+                  additionalProperties:
+                    type: string
+                  description: A map of security groups defined in this VPC
+                  type: object
+                  x-kubernetes-map-type: granular
+                transitGateways:
+                  additionalProperties:
+                    type: string
+                  description: A map of transit gateways defined in this VPC
+                  type: object
+                vpcPeeringConnections:
+                  additionalProperties:
+                    type: string
+                  description: A map of VPC peering connections defined in this VPC
+                  type: object
+                  x-kubernetes-map-type: granular
+              required:
+              - id
+              - privateRouteTables
+              - privateSubnets
+              - publicRouteTables
+              - publicSubnets
+              - securityGroups
+              type: object
+            description: The VPCs defined in this AWS account
+            type: object
+            x-kubernetes-map-type: granular
+        required:
+        - vpcs
+        type: object
+    served: true
+    storage: true

@@ -8,8 +8,8 @@
 *.so
 *.dylib
 
-function-generate-subnets
-crossplane-fn-generate-subnets
+crossplane-fn-network-discovery
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -18,7 +18,7 @@ crossplane-fn-generate-subnets
 package/*.xpkg
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
 
 # Go workspace file
 go.work
