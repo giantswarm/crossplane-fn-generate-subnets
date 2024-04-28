@@ -26,6 +26,7 @@ type Aws struct {
 type Vpc struct {
 	// ID The VPC ID
 	// +kubebuilder:validation:Required
+	// +required
 	ID string `json:"id"`
 
 	// The Ipv4 cidr block defined for this VPC
@@ -33,23 +34,23 @@ type Vpc struct {
 	CidrBlock string `json:"cidrBlock"`
 
 	// A map of public subnets defined in this VPC
-	// +kubebuilder:validation:Required
-	// +mapType=granular
+	// +mapType=atomic
+	// +optional
 	PublicSubnets map[string]string `json:"publicSubnets"`
 
 	// A map of private subnets defined in this VPC
-	// +kubebuilder:validation:Required
-	// +mapType=granular
+	// +mapType=atomic
+	// +optional
 	PrivateSubnets map[string]string `json:"privateSubnets"`
 
 	// A map of public route tables defined in this VPC
-	// +kubebuilder:validation:Required
-	// +mapType=granular
+	// +mapType=atomic
+	// +optional
 	PublicRouteTables map[string]string `json:"publicRouteTables"`
 
 	// A map of private route tables defined in this VPC
-	// +kubebuilder:validation:Required
-	// +mapType=granular
+	// +mapType=atomic
+	// +optional
 	PrivateRouteTables map[string]string `json:"privateRouteTables"`
 
 	// The internet gateway defined in this VPC
@@ -57,22 +58,25 @@ type Vpc struct {
 	InternetGateway string `json:"internetGateway"`
 
 	// A map of NAT gateways defined in this VPC
-	// +mapType=granular
+	// +mapType=atomic
 	// +optional
 	NatGateways map[string]string `json:"natGateways"`
 
 	// A map of transit gateways defined in this VPC
+	// +mapType=atomic
 	// +optional
+	// +nullable
 	TransitGateways map[string]string `json:"transitGateways"`
 
 	// A map of VPC peering connections defined in this VPC
-	// +mapType=granular
+	// +mapType=atomic
 	// +optional
+	// +nullable
 	VpcPeeringConnections map[string]string `json:"vpcPeeringConnections"`
 
 	// A map of security groups defined in this VPC
-	// +kubebuilder:validation:Required
-	// +mapType=granular
+	// +mapType=atomic
+	// +optional
 	SecurityGroups map[string]string `json:"securityGroups"`
 }
 
