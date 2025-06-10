@@ -2,7 +2,7 @@ module github.com/giantswarm/crossplane-fn-generate-subnets
 
 go 1.23.0
 
-toolchain go1.24.1
+toolchain go1.24.4
 
 require (
 	github.com/alecthomas/kong v0.8.1
